@@ -171,9 +171,16 @@ function Index() {
         <aside className="space-y-4 order-2">
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
-            <label className="block text-sm font-semibold text-zinc-100 mb-2">
-              📝 صف موقعك (عربي أو إنجليزي)
-            </label>
+            <div className="flex items-center gap-2 mb-2">
+              <label className="text-sm font-semibold text-zinc-100 shrink-0">
+                📝 صف موقعك (عربي أو إنجليزي)
+              </label>
+              <input
+                type="text"
+                placeholder="اكتب هنا..."
+                className="flex-1 min-w-0 text-sm rounded-lg border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2 placeholder:text-zinc-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none"
+              />
+            </div>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

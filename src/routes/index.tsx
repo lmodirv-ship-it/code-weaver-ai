@@ -902,7 +902,23 @@ function Index() {
                   />
                   <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
-                  {!html ? (
+                  {mode === "describe" && (analyzedSiteUrl || analyzedScreenshot) ? (
+                    analyzedSiteUrl ? (
+                      <iframe
+                        src={analyzedSiteUrl}
+                        title="analyzed site"
+                        className="absolute inset-0 w-full h-full bg-white"
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <img
+                        src={analyzedScreenshot}
+                        alt="analyzed site"
+                        className="absolute inset-0 w-full h-full object-contain bg-white"
+                      />
+                    )
+                  ) : !html ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                       <div className="text-4xl mb-2 animate-pulse">📺</div>
                       <p className="text-xs">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>

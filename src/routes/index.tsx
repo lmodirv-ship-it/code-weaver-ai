@@ -39,8 +39,17 @@ const EXAMPLES = [
 ];
 
 function Index() {
+  const loadVoiceSettings = () => {
+    try {
+      const raw = localStorage.getItem("voiceSettings");
+      if (raw) return JSON.parse(raw) as Record<string, unknown>;
+    } catch { /* ignore */ }
+    return null;
+  };
+  const storedVoice = loadVoiceSettings();
+
   const [mode, setMode] = useState<"create" | "describe">("create");
-  const [lang, setLang] = useState<"ar" | "en">("ar");
+  const [lang, setLang] = useState<"ar" | "en">((storedVoice?.lang as "ar" | "en") ?? "ar");
   const [description, setDescription] = useState<string>(EXAMPLES[0]);
   const [template, setTemplate] = useState<TemplateName>("default");
   const [html, setHtml] = useState<string>("");
@@ -67,10 +76,10 @@ function Index() {
 
   // Voice controls
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
-  const [speechRate, setSpeechRate] = useState<number>(0.95);
-  const [speechPitch, setSpeechPitch] = useState<number>(1);
-  const [voiceLangFilter, setVoiceLangFilter] = useState<"all" | "ar" | "fr" | "en">("all");
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>((storedVoice?.selectedVoiceURI as string) ?? "");
+  const [speechRate, setSpeechRate] = useState<number>((storedVoice?.speechRate as number) ?? 0.95);
+  const [speechPitch, setSpeechPitch] = useState<number>((storedVoice?.speechPitch as number) ?? 1);
+  const [voiceLangFilter, setVoiceLangFilter] = useState<"all" | "ar" | "fr" | "en">((storedVoice?.voiceLangFilter as "all" | "ar" | "fr" | "en") ?? "all");
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -91,6 +100,12 @@ function Index() {
       if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = null;
     };
   }, []);
+
+  // Persist voice settings
+  useEffect(() => {
+    const settings = { lang, selectedVoiceURI, speechRate, speechPitch, voiceLangFilter };
+    localStorage.setItem("voiceSettings", JSON.stringify(settings));
+  }, [lang, selectedVoiceURI, speechRate, speechPitch, voiceLangFilter]);
 
   const addLog = (msg: string) => {
     setLogEntries((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev].slice(0, 20));

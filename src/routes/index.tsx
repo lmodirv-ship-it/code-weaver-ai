@@ -64,6 +64,8 @@ function Index() {
   const [analysis, setAnalysis] = useState<string>("");
   const [analyzing, setAnalyzing] = useState<boolean>(false);
   const [analyzeError, setAnalyzeError] = useState<string>("");
+  const [analyzedSiteUrl, setAnalyzedSiteUrl] = useState<string>("");
+  const [analyzedScreenshot, setAnalyzedScreenshot] = useState<string>("");
   const runAnalyze = useServerFn(analyzeWebsite);
 
   // Smart assistant (mascot + voice + log)
@@ -449,6 +451,14 @@ function Index() {
       return;
     }
     setAnalyzing(true);
+    // Show the real site on the TV screen
+    setAnalyzedSiteUrl(siteUrl.trim());
+    setAnalyzedScreenshot(
+      siteUrl.trim()
+        ? `https://image.thum.io/get/width/1280/crop/900/noanimate/${siteUrl.trim()}`
+        : imageDataUrl,
+    );
+    setTab("preview");
     addLog(lang === "ar" ? "🔍 بدء التحليل التفاعلي..." : "🔍 Starting interactive analysis...");
     startMascotTour();
     try {
@@ -456,6 +466,7 @@ function Index() {
         data: { url: siteUrl.trim(), imageDataUrl, lang },
       });
       setAnalysis(res.description || "");
+      if (res.screenshotUrl) setAnalyzedScreenshot(res.screenshotUrl);
       addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");
@@ -891,7 +902,23 @@ function Index() {
                   />
                   <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
-                  {!html ? (
+                  {mode === "describe" && (analyzedSiteUrl || analyzedScreenshot) ? (
+                    analyzedSiteUrl ? (
+                      <iframe
+                        src={analyzedSiteUrl}
+                        title="analyzed site"
+                        className="absolute inset-0 w-full h-full bg-white"
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <img
+                        src={analyzedScreenshot}
+                        alt="analyzed site"
+                        className="absolute inset-0 w-full h-full object-contain bg-white"
+                      />
+                    )
+                  ) : !html ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                       <div className="text-4xl mb-2 animate-pulse">📺</div>
                       <p className="text-xs">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>

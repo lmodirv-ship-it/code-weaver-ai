@@ -222,7 +222,7 @@ function Index() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mt-4">
+            <div className="sticky bottom-2 z-30 grid grid-cols-2 gap-2 mt-4 p-2 -mx-2 rounded-xl bg-zinc-900/95 backdrop-blur border border-zinc-800 shadow-[0_-8px_20px_-10px_rgba(0,0,0,0.8)]">
               <button
                 onClick={handleGenerate}
                 className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 hover:opacity-95"
@@ -373,7 +373,7 @@ function Index() {
                 </div>
 
                 {/* Screen */}
-                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video">
+                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[45vh]">
                   <div
                     className="pointer-events-none absolute inset-0 z-10 opacity-[0.06] mix-blend-overlay"
                     style={{

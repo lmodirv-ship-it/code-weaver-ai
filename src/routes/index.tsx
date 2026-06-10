@@ -117,19 +117,19 @@ function Index() {
   }, [html]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 40%, #000000 100%)" }}>
       {/* Header */}
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-zinc-800 bg-black/70 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
               W
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-slate-900">
+              <h1 className="text-base sm:text-lg font-bold text-white">
                 مصمم المواقع الذكي
               </h1>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-zinc-400">
                 Smart Website Designer · AR / EN
               </p>
             </div>
@@ -144,21 +144,21 @@ function Index() {
             <button
               onClick={handleOpenInNewTab}
               disabled={!html}
-              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
             >
               فتح في نافذة
             </button>
             <button
               onClick={handleDownloadHtml}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
             >
               HTML
             </button>
             <button
               onClick={() => handleExportZip()}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50"
             >
               تصدير ZIP
             </button>
@@ -170,15 +170,15 @@ function Index() {
         {/* Description panel — below the TV */}
         <aside className="space-y-4 order-2">
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
+            <label className="block text-sm font-semibold text-zinc-100 mb-2">
               📝 صف موقعك (عربي أو إنجليزي)
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={6}
-              className="w-full text-sm rounded-xl border border-slate-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none resize-none"
+              className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none"
               placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
             />
 
@@ -187,7 +187,7 @@ function Index() {
                 <button
                   key={i}
                   onClick={() => setDescription(ex)}
-                  className="text-xs px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
                 >
                   مثال {i + 1}
                 </button>
@@ -196,13 +196,13 @@ function Index() {
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
                   🎨 القالب
                 </label>
                 <select
                   value={template}
                   onChange={(e) => setTemplate(e.target.value as TemplateName)}
-                  className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2 bg-white"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
                 >
                   <option value="default">Default (Modern)</option>
                   <option value="bootstrap">Bootstrap 5</option>
@@ -210,14 +210,14 @@ function Index() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
                   💾 اسم المشروع
                 </label>
                 <input
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   placeholder="my-site"
-                  className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
                 />
               </div>
             </div>
@@ -239,12 +239,12 @@ function Index() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900 mb-2">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
+            <h3 className="text-sm font-semibold text-zinc-100 mb-2">
               💼 المشاريع المحفوظة ({projects.length})
             </h3>
             {projects.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">
+              <p className="text-xs text-zinc-500 py-4 text-center">
                 لا توجد مشاريع بعد. ولّد موقعاً واضغط حفظ.
               </p>
             ) : (
@@ -252,12 +252,12 @@ function Index() {
                 {projects.map((p) => (
                   <li
                     key={p.id}
-                    className="border border-slate-200 rounded-lg p-2.5 hover:bg-slate-50 group"
+                    className="border border-zinc-800 rounded-lg p-2.5 hover:bg-zinc-800 group"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <button
                         onClick={() => handleLoad(p)}
-                        className="text-sm font-medium text-slate-900 text-right truncate flex-1"
+                        className="text-sm font-medium text-zinc-100 text-right truncate flex-1"
                       >
                         {p.name}
                       </button>
@@ -265,20 +265,20 @@ function Index() {
                         <button
                           onClick={() => handleExportZip(p)}
                           title="تصدير"
-                          className="text-xs px-2 py-1 rounded hover:bg-slate-200"
+                          className="text-xs px-2 py-1 rounded hover:bg-zinc-700 text-zinc-300"
                         >
                           📦
                         </button>
                         <button
                           onClick={() => handleDelete(p.id)}
                           title="حذف"
-                          className="text-xs px-2 py-1 rounded hover:bg-red-100 text-red-600"
+                          className="text-xs px-2 py-1 rounded hover:bg-red-900/30 text-red-400"
                         >
                           🗑
                         </button>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    <p className="text-[11px] text-zinc-500 mt-0.5 truncate">
                       {p.template} · {new Date(p.createdAt).toLocaleString()}
                     </p>
                   </li>
@@ -418,7 +418,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="text-center text-xs text-slate-500 py-6">
+      <footer className="text-center text-xs text-zinc-500 py-6">
         مولّد مواقع ذكي — يدعم العربية والإنجليزية · بدون خادم، يعمل بالكامل في متصفحك.
       </footer>
     </div>

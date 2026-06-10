@@ -451,6 +451,14 @@ function Index() {
       return;
     }
     setAnalyzing(true);
+    // Show the real site on the TV screen
+    setAnalyzedSiteUrl(siteUrl.trim());
+    setAnalyzedScreenshot(
+      siteUrl.trim()
+        ? `https://image.thum.io/get/width/1280/crop/900/noanimate/${siteUrl.trim()}`
+        : imageDataUrl,
+    );
+    setTab("preview");
     addLog(lang === "ar" ? "🔍 بدء التحليل التفاعلي..." : "🔍 Starting interactive analysis...");
     startMascotTour();
     try {
@@ -458,6 +466,7 @@ function Index() {
         data: { url: siteUrl.trim(), imageDataUrl, lang },
       });
       setAnalysis(res.description || "");
+      if (res.screenshotUrl) setAnalyzedScreenshot(res.screenshotUrl);
       addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");

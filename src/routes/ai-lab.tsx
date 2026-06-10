@@ -77,10 +77,9 @@ function AiLab() {
     setTeachingFor(null);
   };
 
-  const reset = () => {
-    if (!confirm("إعادة تعيين ذاكرة النموذج؟")) return;
-    setState(resetState());
-    setMsgs([]);
+  const clearHist = () => {
+    if (!confirm("مسح سجل المحادثات؟ لا يمكن التراجع.")) return;
+    setState((s) => clearHistory({ ...s }));
   };
 
   const stats = {

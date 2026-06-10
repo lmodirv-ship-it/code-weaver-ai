@@ -291,26 +291,26 @@ function Index() {
         <section className="flex flex-col">
           {/* Outer box — deepest frame with rim light */}
           <div
-            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_1.5px_0_rgba(255,255,255,0.14),inset_0_-1.5px_0_rgba(0,0,0,0.85),inset_1.5px_0_0_rgba(255,255,255,0.05),inset_-1.5px_0_0_rgba(0,0,0,0.7)]"
+            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_2px_0_rgba(255,255,255,0.18),inset_0_-2px_0_rgba(0,0,0,0.92),inset_2.5px_0_0_rgba(255,255,255,0.12),inset_-2.5px_0_0_rgba(0,0,0,0.85)]"
             style={{
               background:
-                "radial-gradient(120% 90% at 50% 0%, #1c1c1c 0%, #0c0c0c 50%, #050505 100%)",
+                "radial-gradient(120% 90% at 50% 0%, #181818 0%, #080808 50%, #020202 100%)",
             }}
           >
             {/* Subtle wavy highlight band along the top inner edge */}
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-x-1 top-0 h-[3px] rounded-t-2xl opacity-70"
+              className="pointer-events-none absolute inset-x-1 top-0 h-[4px] rounded-t-2xl opacity-80"
               style={{
                 background:
-                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.22) 80%, transparent 100%)",
+                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 20%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.28) 80%, transparent 100%)",
               }}
             />
             {/* Outer box corner bolts — metallic */}
-            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
+            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
 
             {/* Middle box — brushed metal */}
             <div

@@ -65,6 +65,33 @@ function Index() {
   const [lastSpeech, setLastSpeech] = useState<string>("");
   const tourTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Voice controls
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
+  const [speechRate, setSpeechRate] = useState<number>(0.95);
+  const [speechPitch, setSpeechPitch] = useState<number>(1);
+  const [voiceLangFilter, setVoiceLangFilter] = useState<"all" | "ar" | "fr" | "en">("all");
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    const load = () => {
+      const v = window.speechSynthesis.getVoices();
+      if (v.length) {
+        setVoices(v);
+        setSelectedVoiceURI((prev) => {
+          if (prev && v.some((x) => x.voiceURI === prev)) return prev;
+          const arOne = v.find((x) => x.lang?.toLowerCase().startsWith("ar"));
+          return (arOne || v[0]).voiceURI;
+        });
+      }
+    };
+    load();
+    window.speechSynthesis.onvoiceschanged = load;
+    return () => {
+      if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
   const addLog = (msg: string) => {
     setLogEntries((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev].slice(0, 20));
   };
@@ -77,8 +104,15 @@ function Index() {
     try {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === "ar" ? "ar-SA" : "en-US";
-      u.rate = 0.95;
+      const v = voices.find((x) => x.voiceURI === selectedVoiceURI);
+      if (v) {
+        u.voice = v;
+        u.lang = v.lang;
+      } else {
+        u.lang = lang === "ar" ? "ar-SA" : "en-US";
+      }
+      u.rate = speechRate;
+      u.pitch = speechPitch;
       window.speechSynthesis.speak(u);
     } catch {
       /* ignore */

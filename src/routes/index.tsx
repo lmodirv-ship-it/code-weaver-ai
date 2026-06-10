@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 const { saveAs } = FileSaver;
+import { useServerFn } from "@tanstack/react-start";
 import { generateWebsite, type TemplateName } from "@/lib/website-generator";
 import {
   listProjects,
@@ -10,6 +11,7 @@ import {
   deleteProject,
   type Project,
 } from "@/lib/projects-store";
+import { analyzeWebsite } from "@/lib/analyze.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,6 +39,8 @@ const EXAMPLES = [
 ];
 
 function Index() {
+  const [mode, setMode] = useState<"create" | "describe">("create");
+  const [lang, setLang] = useState<"ar" | "en">("ar");
   const [description, setDescription] = useState<string>(EXAMPLES[0]);
   const [template, setTemplate] = useState<TemplateName>("default");
   const [html, setHtml] = useState<string>("");
@@ -44,6 +48,14 @@ function Index() {
   const [projectName, setProjectName] = useState<string>("");
   const [tab, setTab] = useState<"preview" | "code" | "projects">("preview");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Describe-existing-site state
+  const [siteUrl, setSiteUrl] = useState<string>("");
+  const [imageDataUrl, setImageDataUrl] = useState<string>("");
+  const [analysis, setAnalysis] = useState<string>("");
+  const [analyzing, setAnalyzing] = useState<boolean>(false);
+  const [analyzeError, setAnalyzeError] = useState<string>("");
+  const runAnalyze = useServerFn(analyzeWebsite);
 
   useEffect(() => {
     setProjects(listProjects());
@@ -54,6 +66,40 @@ function Index() {
   const handleGenerate = () => {
     const code = generateWebsite(description, template);
     setHtml(code);
+  };
+
+  const onPickImage = (file: File | null) => {
+    if (!file) {
+      setImageDataUrl("");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setAnalyzeError(lang === "ar" ? "الصورة كبيرة جداً (الحد 5MB)" : "Image too large (max 5MB)");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setImageDataUrl(String(reader.result || ""));
+    reader.readAsDataURL(file);
+  };
+
+  const handleAnalyze = async () => {
+    setAnalyzeError("");
+    setAnalysis("");
+    if (!siteUrl.trim() && !imageDataUrl) {
+      setAnalyzeError(lang === "ar" ? "أدخل رابطاً أو ارفع صورة" : "Enter a URL or upload an image");
+      return;
+    }
+    setAnalyzing(true);
+    try {
+      const res = await runAnalyze({
+        data: { url: siteUrl.trim(), imageDataUrl, lang },
+      });
+      setAnalysis(res.description || "");
+    } catch (e) {
+      setAnalyzeError((e as Error).message || "Error");
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleSave = () => {
@@ -171,72 +217,164 @@ function Index() {
         <aside className="space-y-4 order-2 lg:order-1 w-full lg:w-1/3 lg:max-w-md">
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
-            <label className="block text-sm font-semibold text-zinc-100 mb-2">
-              📝 صف موقعك (عربي أو إنجليزي)
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={6}
-              className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none placeholder:text-zinc-500"
-              placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
-            />
-
-            <div className="flex flex-wrap gap-2 mt-2">
-              {EXAMPLES.map((ex, i) => (
+            {/* Mode + Language toggles */}
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex bg-zinc-950 rounded-lg p-0.5 border border-zinc-800">
                 <button
-                  key={i}
-                  onClick={() => setDescription(ex)}
-                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                  onClick={() => setMode("create")}
+                  className={`text-xs px-2.5 py-1.5 rounded-md font-medium transition ${
+                    mode === "create" ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-zinc-200"
+                  }`}
                 >
-                  مثال {i + 1}
+                  🎨 تصميم جديد
                 </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1">
-                  🎨 القالب
-                </label>
-                <select
-                  value={template}
-                  onChange={(e) => setTemplate(e.target.value as TemplateName)}
-                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
+                <button
+                  onClick={() => setMode("describe")}
+                  className={`text-xs px-2.5 py-1.5 rounded-md font-medium transition ${
+                    mode === "describe" ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-zinc-200"
+                  }`}
                 >
-                  <option value="default">Default (Modern)</option>
-                  <option value="bootstrap">Bootstrap 5</option>
-                  <option value="tailwind">Tailwind CDN</option>
-                </select>
+                  🔍 وصف موقع موجود
+                </button>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1">
-                  💾 اسم المشروع
-                </label>
-                <input
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="my-site"
-                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
-                />
+              <div className="flex bg-zinc-950 rounded-lg p-0.5 border border-zinc-800">
+                <button
+                  onClick={() => setLang("ar")}
+                  className={`text-xs px-2 py-1 rounded ${lang === "ar" ? "bg-zinc-200 text-zinc-900" : "text-zinc-400"}`}
+                >
+                  AR
+                </button>
+                <button
+                  onClick={() => setLang("en")}
+                  className={`text-xs px-2 py-1 rounded ${lang === "en" ? "bg-zinc-200 text-zinc-900" : "text-zinc-400"}`}
+                >
+                  EN
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              <button
-                onClick={handleGenerate}
-                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 hover:opacity-95"
-              >
-                🚀 توليد الموقع
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!html}
-                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-60 disabled:text-zinc-300"
-              >
-                💾 حفظ
-              </button>
-            </div>
+            {mode === "create" ? (
+              <>
+                <label className="block text-sm font-semibold text-zinc-100 mb-2">
+                  📝 {lang === "ar" ? "صف موقعك (عربي أو إنجليزي)" : "Describe your website"}
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={6}
+                  dir={lang === "ar" ? "rtl" : "ltr"}
+                  className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none placeholder:text-zinc-500"
+                  placeholder={lang === "ar"
+                    ? "مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
+                    : "Example: A SaaS landing page with hero, features and pricing..."}
+                />
+
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {EXAMPLES.map((ex, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setDescription(ex)}
+                      className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                    >
+                      {lang === "ar" ? "مثال" : "Example"} {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">🎨 {lang === "ar" ? "القالب" : "Template"}</label>
+                    <select
+                      value={template}
+                      onChange={(e) => setTemplate(e.target.value as TemplateName)}
+                      className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
+                    >
+                      <option value="default">Default (Modern)</option>
+                      <option value="bootstrap">Bootstrap 5</option>
+                      <option value="tailwind">Tailwind CDN</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">💾 {lang === "ar" ? "اسم المشروع" : "Project name"}</label>
+                    <input
+                      value={projectName}
+                      onChange={(e) => setProjectName(e.target.value)}
+                      placeholder="my-site"
+                      className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <button
+                    onClick={handleGenerate}
+                    className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 hover:opacity-95"
+                  >
+                    🚀 {lang === "ar" ? "توليد الموقع" : "Generate"}
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={!html}
+                    className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-60 disabled:text-zinc-300"
+                  >
+                    💾 {lang === "ar" ? "حفظ" : "Save"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="block text-sm font-semibold text-zinc-100 mb-2">
+                  🔍 {lang === "ar" ? "حلّل موقعاً موجوداً" : "Analyze an existing site"}
+                </label>
+
+                <input
+                  type="url"
+                  value={siteUrl}
+                  onChange={(e) => setSiteUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  dir="ltr"
+                  className="w-full text-sm rounded-lg border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2 focus:border-blue-500 outline-none placeholder:text-zinc-500"
+                />
+
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                    🖼️ {lang === "ar" ? "أو ارفع صورة لواجهة الموقع" : "Or upload a UI screenshot"}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onPickImage(e.target.files?.[0] || null)}
+                    className="w-full text-xs text-zinc-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-zinc-800 file:text-zinc-100 hover:file:bg-zinc-700"
+                  />
+                  {imageDataUrl && (
+                    <img src={imageDataUrl} alt="upload" className="mt-2 max-h-32 rounded-md border border-zinc-800" />
+                  )}
+                </div>
+
+                <button
+                  onClick={handleAnalyze}
+                  disabled={analyzing}
+                  className="w-full mt-4 text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-fuchsia-600 to-indigo-600 text-white shadow-md hover:opacity-95 disabled:opacity-60"
+                >
+                  {analyzing
+                    ? (lang === "ar" ? "⏳ جاري التحليل..." : "⏳ Analyzing...")
+                    : (lang === "ar" ? "🧠 تحليل ووصف الموقع" : "🧠 Analyze & describe")}
+                </button>
+
+                {analyzeError && (
+                  <p className="mt-2 text-xs text-red-400">{analyzeError}</p>
+                )}
+
+                {analysis && (
+                  <div
+                    dir={lang === "ar" ? "rtl" : "ltr"}
+                    className="mt-3 max-h-80 overflow-auto text-xs leading-relaxed bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-zinc-200 whitespace-pre-wrap"
+                  >
+                    {analysis}
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">

@@ -39,8 +39,17 @@ function tokenize(s: string): string[] {
   return s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(Boolean);
 }
 
-function isArabic(s: string): boolean {
+export function isArabic(s: string): boolean {
   return /[\u0600-\u06FF]/.test(s);
+}
+
+export function detectLang(s: string): "ar" | "en" | "mixed" {
+  const hasAr = /[\u0600-\u06FF]/.test(s);
+  const hasEn = /[a-zA-Z]/.test(s);
+  if (hasAr && hasEn) return "mixed";
+  if (hasAr) return "ar";
+  if (hasEn) return "en";
+  return "en";
 }
 
 function similarity(a: string, b: string): number {
@@ -132,6 +141,12 @@ export function applyFeedback(state: ModelState, idx: number, fb: 1 | -1): Model
   // Cool down temperature after positive feedback, heat up after negative.
   if (fb === 1) state.temperature = Math.max(0.2, state.temperature * 0.97);
   else state.temperature = Math.min(1.2, state.temperature * 1.03);
+  return state;
+}
+
+export function clearHistory(state: ModelState): ModelState {
+  state.history = [];
+  saveState(state);
   return state;
 }
 

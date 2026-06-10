@@ -57,6 +57,87 @@ function Index() {
   const [analyzeError, setAnalyzeError] = useState<string>("");
   const runAnalyze = useServerFn(analyzeWebsite);
 
+  // Smart assistant (mascot + voice + log)
+  const [logEntries, setLogEntries] = useState<string[]>([]);
+  const [mascotActive, setMascotActive] = useState<boolean>(false);
+  const [mascotPos, setMascotPos] = useState<{ top: string; left: string }>({ top: "75%", left: "10%" });
+  const [mascotMessage, setMascotMessage] = useState<string>("");
+  const [lastSpeech, setLastSpeech] = useState<string>("");
+  const tourTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const addLog = (msg: string) => {
+    setLogEntries((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev].slice(0, 20));
+  };
+
+  const speak = (text: string) => {
+    if (!text) return;
+    setLastSpeech(text);
+    setMascotMessage(text);
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === "ar" ? "ar-SA" : "en-US";
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const stopTour = () => {
+    if (tourTimerRef.current) {
+      clearInterval(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+    setMascotActive(false);
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
+    }
+  };
+
+  const startMascotTour = () => {
+    stopTour();
+    const sections = lang === "ar"
+      ? [
+          { name: "الشريط العلوي", desc: "يحتوي على الشعار وقائمة التنقل، تصميمه واضح وثابت.", pos: { top: "8%", left: "50%" } },
+          { name: "قسم البطل", desc: "عنوان جذاب وصورة بارزة توجّه المستخدم للإجراء التالي.", pos: { top: "30%", left: "50%" } },
+          { name: "زر الدعوة للإجراء", desc: "يبرز بلون متضاد لزيادة التحويلات.", pos: { top: "45%", left: "78%" } },
+          { name: "لوحة الألوان", desc: "ألوان داكنة مع لمسات لامعة تناسب الهوية.", pos: { top: "65%", left: "18%" } },
+          { name: "نقاط التحسين", desc: "يُنصح بتحسين السرعة وإضافة آراء العملاء.", pos: { top: "82%", left: "70%" } },
+        ]
+      : [
+          { name: "Header", desc: "Logo and nav, clean and consistent layout.", pos: { top: "8%", left: "50%" } },
+          { name: "Hero", desc: "Strong headline with visual to guide the user.", pos: { top: "30%", left: "50%" } },
+          { name: "CTA Button", desc: "Contrasting color maximizes conversions.", pos: { top: "45%", left: "78%" } },
+          { name: "Color palette", desc: "Dark theme with accent highlights matches the brand.", pos: { top: "65%", left: "18%" } },
+          { name: "Improvements", desc: "Improve load speed and add customer reviews.", pos: { top: "82%", left: "70%" } },
+        ];
+    setMascotActive(true);
+    let step = 0;
+    const tick = () => {
+      if (step >= sections.length) {
+        stopTour();
+        addLog(lang === "ar" ? "🏁 اكتمل التحليل التفاعلي" : "🏁 Interactive tour complete");
+        speak(lang === "ar" ? "انتهيت من شرح الأقسام." : "Done explaining the sections.");
+        setMascotPos({ top: "85%", left: "85%" });
+        return;
+      }
+      const s = sections[step];
+      setMascotPos(s.pos);
+      addLog(`🔍 ${s.name} — ${s.desc}`);
+      speak(`${s.name}. ${s.desc}`);
+      step++;
+    };
+    tick();
+    tourTimerRef.current = setInterval(tick, 4500);
+  };
+
+  useEffect(() => {
+    return () => stopTour();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     setProjects(listProjects());
     handleGenerate();
@@ -90,13 +171,17 @@ function Index() {
       return;
     }
     setAnalyzing(true);
+    addLog(lang === "ar" ? "🔍 بدء التحليل التفاعلي..." : "🔍 Starting interactive analysis...");
+    startMascotTour();
     try {
       const res = await runAnalyze({
         data: { url: siteUrl.trim(), imageDataUrl, lang },
       });
       setAnalysis(res.description || "");
+      addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");
+      addLog(`❌ ${(e as Error).message || "Error"}`);
     } finally {
       setAnalyzing(false);
     }
@@ -539,6 +624,29 @@ function Index() {
                       <code>{html}</code>
                     </pre>
                   )}
+
+                  {/* Smart mascot overlay (analyze mode) */}
+                  {mode === "describe" && mascotActive && (
+                    <div className="pointer-events-none absolute inset-0 z-20">
+                      <div
+                        className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-out"
+                        style={{ top: mascotPos.top, left: mascotPos.left }}
+                      >
+                        <div className="relative">
+                          <div className="text-3xl animate-bounce drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">🤖</div>
+                          <span className="absolute -inset-2 rounded-full bg-fuchsia-500/20 blur-xl animate-pulse" />
+                        </div>
+                        {mascotMessage && (
+                          <div
+                            dir={lang === "ar" ? "rtl" : "ltr"}
+                            className="mt-2 max-w-[220px] bg-zinc-900/95 border border-fuchsia-500/40 text-[11px] text-zinc-100 rounded-lg px-2.5 py-1.5 shadow-lg shadow-fuchsia-500/20"
+                          >
+                            {mascotMessage}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* TV info bar */}
@@ -553,6 +661,64 @@ function Index() {
           {/* Stand */}
           <div className="mx-auto mt-1 h-2 w-28 bg-gradient-to-b from-zinc-900 to-black rounded-b-lg shadow-md" />
           <div className="mx-auto h-1 w-48 bg-black rounded-full shadow-md" />
+
+          {/* Smart assistant: mascot controls + log */}
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-zinc-100">🤖 {lang === "ar" ? "المساعد الذكي" : "Smart Assistant"}</h3>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full ${mascotActive ? "bg-fuchsia-600/30 text-fuchsia-200" : "bg-zinc-800 text-zinc-400"}`}>
+                  {mascotActive ? (lang === "ar" ? "نشط" : "Active") : (lang === "ar" ? "متوقف" : "Idle")}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mb-3">
+                {lang === "ar"
+                  ? "في وضع «وصف موقع موجود»، تتحرك الدمية فوق الشاشة وتشرح كل قسم بصوت ونص."
+                  : "In Analyze mode, the mascot moves across the screen and explains each section with voice and text."}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={startMascotTour}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-fuchsia-600 text-white hover:bg-fuchsia-500"
+                >
+                  ▶ {lang === "ar" ? "جولة تفاعلية" : "Interactive tour"}
+                </button>
+                <button
+                  onClick={stopTour}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
+                >
+                  ⏹ {lang === "ar" ? "إيقاف" : "Stop"}
+                </button>
+                <button
+                  onClick={() => speak(lastSpeech || (lang === "ar" ? "ابدأ الجولة لسماع الشرح" : "Start the tour to hear narration"))}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
+                >
+                  🔊 {lang === "ar" ? "إعادة قراءة" : "Replay voice"}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-zinc-100">📜 {lang === "ar" ? "سجل التفاعل" : "Activity log"}</h3>
+                <button
+                  onClick={() => setLogEntries([])}
+                  className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                >
+                  {lang === "ar" ? "مسح" : "Clear"}
+                </button>
+              </div>
+              <div dir={lang === "ar" ? "rtl" : "ltr"} className="h-40 overflow-auto text-[11px] text-zinc-300 space-y-1 font-mono">
+                {logEntries.length === 0 ? (
+                  <p className="text-zinc-500">{lang === "ar" ? "لا توجد أحداث بعد." : "No events yet."}</p>
+                ) : (
+                  logEntries.map((l, i) => (
+                    <p key={i} className="border-b border-zinc-800/60 pb-1">{l}</p>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 

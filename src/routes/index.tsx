@@ -668,7 +668,7 @@ function Index() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-4">
+                <div className="grid grid-cols-3 gap-2 mt-4">
                   <button
                     onClick={handleGenerate}
                     className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 hover:opacity-95"
@@ -681,6 +681,13 @@ function Index() {
                     className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-60 disabled:text-zinc-300"
                   >
                     💾 {lang === "ar" ? "حفظ" : "Save"}
+                  </button>
+                  <button
+                    onClick={handleDownloadHtml}
+                    disabled={!html}
+                    className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-500/30 hover:bg-emerald-500 disabled:opacity-60 disabled:text-zinc-300"
+                  >
+                    ⬇️ {lang === "ar" ? "تحميل" : "Download"}
                   </button>
                 </div>
               </>

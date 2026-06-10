@@ -8,7 +8,7 @@ const InputSchema = z.object({
 });
 
 // Extract clean, AI-friendly context from raw HTML
-function extractContext(html: string, url: string): string {
+function extractContext(html: string, url: string): { text: string; pages: string[] } {
   const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? "";
   const all = (re: RegExp) => {
     const out: string[] = [];

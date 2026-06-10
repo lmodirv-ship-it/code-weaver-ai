@@ -7,6 +7,54 @@ const InputSchema = z.object({
   lang: z.enum(["ar", "en"]).default("ar"),
 });
 
+// Extract clean, AI-friendly context from raw HTML
+function extractContext(html: string, url: string): string {
+  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? "";
+  const all = (re: RegExp) => {
+    const out: string[] = [];
+    let m;
+    while ((m = re.exec(html)) !== null) out.push(m[1].trim());
+    return out;
+  };
+
+  const title = pick(/<title[^>]*>([^<]+)<\/title>/i);
+  const desc = pick(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i);
+  const ogTitle = pick(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i);
+  const ogDesc = pick(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i);
+  const lang = pick(/<html[^>]+lang=["']([^"']+)["']/i);
+  const h1 = all(/<h1[^>]*>([\s\S]*?)<\/h1>/gi).map((s) => s.replace(/<[^>]+>/g, "").trim()).filter(Boolean).slice(0, 5);
+  const h2 = all(/<h2[^>]*>([\s\S]*?)<\/h2>/gi).map((s) => s.replace(/<[^>]+>/g, "").trim()).filter(Boolean).slice(0, 12);
+  const navLinks = all(/<a[^>]*>([\s\S]*?)<\/a>/gi)
+    .map((s) => s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim())
+    .filter((s) => s.length > 1 && s.length < 40)
+    .slice(0, 20);
+
+  // Visible body text
+  const body = (html.match(/<body[\s\S]*?<\/body>/i)?.[0] ?? html)
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 4000);
+
+  return [
+    `URL: ${url}`,
+    lang && `HTML lang: ${lang}`,
+    title && `Title: ${title}`,
+    (desc || ogDesc) && `Meta description: ${desc || ogDesc}`,
+    ogTitle && ogTitle !== title && `OG title: ${ogTitle}`,
+    h1.length && `H1: ${h1.join(" | ")}`,
+    h2.length && `H2: ${h2.join(" | ")}`,
+    navLinks.length && `Nav/links sample: ${navLinks.join(" · ")}`,
+    body && `Visible text (truncated): ${body}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 export const analyzeWebsite = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }) => {
@@ -18,35 +66,48 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
       throw new Error(lang === "ar" ? "أدخل رابط الموقع أو ارفع صورة" : "Provide a URL or upload an image");
     }
 
-    // If URL provided, fetch HTML and extract text/meta
+    // Fetch + extract clean context
     let pageContext = "";
+    let screenshotUrl = "";
     if (url) {
       try {
         const res = await fetch(url, {
-          headers: { "User-Agent": "Mozilla/5.0 LovableBot" },
+          headers: {
+            "User-Agent": "Mozilla/5.0 (compatible; LovableAnalyzer/1.0)",
+            Accept: "text/html,application/xhtml+xml",
+          },
+          redirect: "follow",
           signal: AbortSignal.timeout(15000),
         });
-        const html = (await res.text()).slice(0, 120_000);
-        pageContext = html;
+        const html = await res.text();
+        pageContext = extractContext(html, url);
       } catch (e) {
-        pageContext = `(تعذر جلب الصفحة: ${(e as Error).message})`;
+        pageContext = `(Could not fetch page: ${(e as Error).message}) URL: ${url}`;
       }
+      // Public screenshot service (no key) — lets the vision model see the real site
+      screenshotUrl = `https://image.thum.io/get/width/1280/crop/900/noanimate/${url}`;
     }
 
     const systemPrompt =
       lang === "ar"
-        ? "أنت محلل واجهات مواقع محترف. قدّم وصفاً عربياً واضحاً ومنظماً للموقع: الغرض، الأقسام الرئيسية، نظام الألوان، الخطوط، التخطيط، عناصر التفاعل، نقاط القوة والضعف، واقتراحات تحسين. استخدم عناوين Markdown وقوائم نقطية."
-        : "You are an expert web UI analyst. Provide a clear, structured description of the website: purpose, main sections, color palette, typography, layout, interactive elements, strengths, weaknesses, and improvement suggestions. Use Markdown headings and bullet lists.";
+        ? "أنت محلل واجهات مواقع محترف. اعتمد فقط على البيانات المُعطاة (لقطة الشاشة + النص المستخرج). صف الموقع بدقة كما هو فعلياً: الغرض، الأقسام الرئيسية، نظام الألوان، الخطوط، التخطيط، عناصر التفاعل، نقاط القوة والضعف، واقتراحات تحسين. لا تخترع محتوى غير موجود. استخدم Markdown مع عناوين وقوائم نقطية."
+        : "You are an expert web UI analyst. Use ONLY the provided screenshot and extracted text. Describe the site as it actually is: purpose, main sections, color palette, typography, layout, interactive elements, strengths, weaknesses, and improvement suggestions. Do not invent content. Use Markdown with headings and bullet lists.";
 
     const userContent: Array<Record<string, unknown>> = [];
+
     if (url) {
       userContent.push({
         type: "text",
         text:
-          (lang === "ar" ? "حلّل هذا الموقع: " : "Analyze this website: ") +
-          url +
-          (pageContext ? `\n\nHTML (truncated):\n${pageContext.slice(0, 40_000)}` : ""),
+          (lang === "ar" ? "حلّل هذا الموقع بدقة:\n" : "Analyze this site precisely:\n") +
+          pageContext,
       });
+      if (screenshotUrl) {
+        userContent.push({
+          type: "image_url",
+          image_url: { url: screenshotUrl },
+        });
+      }
     }
     if (imageDataUrl) {
       userContent.push({
@@ -83,5 +144,8 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
     }
     const json = await res.json();
     const content = json?.choices?.[0]?.message?.content ?? "";
-    return { description: typeof content === "string" ? content : JSON.stringify(content) };
+    return {
+      description: typeof content === "string" ? content : JSON.stringify(content),
+      screenshotUrl,
+    };
   });

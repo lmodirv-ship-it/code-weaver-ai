@@ -257,6 +257,98 @@ function AiLab() {
           </div>
         </aside>
       </main>
+
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-10" dir="rtl">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📜</span>
+              <h3 className="text-sm font-semibold text-slate-900">سجل المحادثات</h3>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                {state.history.length} تفاعل
+              </span>
+            </div>
+            {state.history.length > 0 && (
+              <button
+                onClick={clearHist}
+                className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+              >
+                🗑️ مسح السجل
+              </button>
+            )}
+          </div>
+
+          {state.history.length === 0 ? (
+            <div className="text-center text-slate-400 text-sm py-10">
+              لا توجد محادثات مسجلة بعد.
+            </div>
+          ) : (
+            <div className="max-h-[400px] overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 sticky top-0 z-10">
+                  <tr className="text-xs text-slate-500">
+                    <th className="text-right px-4 py-2 font-medium">#</th>
+                    <th className="text-right px-4 py-2 font-medium">السؤال</th>
+                    <th className="text-right px-4 py-2 font-medium">الإجابة</th>
+                    <th className="text-right px-4 py-2 font-medium">اللغة</th>
+                    <th className="text-right px-4 py-2 font-medium">التقييم</th>
+                    <th className="text-right px-4 py-2 font-medium">الوقت</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...state.history].reverse().map((h, i) => {
+                    const lang = detectLang(h.q);
+                    const langLabel =
+                      lang === "ar" ? "عربي" : lang === "en" ? "إنجليزي" : "مختلط";
+                    const langColor =
+                      lang === "ar"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : lang === "en"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-amber-100 text-amber-700";
+                    return (
+                      <tr key={h.ts} className="border-b border-slate-100 hover:bg-slate-50/50">
+                        <td className="px-4 py-2 text-slate-400 text-xs">
+                          {state.history.length - i}
+                        </td>
+                        <td className="px-4 py-2 text-slate-800 max-w-[200px] truncate" title={h.q}>
+                          {h.q}
+                        </td>
+                        <td className="px-4 py-2 text-slate-700 max-w-[200px] truncate" title={h.a}>
+                          {h.a}
+                        </td>
+                        <td className="px-4 py-2">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${langColor}`}>
+                            {langLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2">
+                          {h.feedback === 1 ? (
+                            <span className="text-green-600">👍</span>
+                          ) : h.feedback === -1 ? (
+                            <span className="text-red-600">👎</span>
+                          ) : (
+                            <span className="text-slate-300">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2 text-slate-400 text-[11px] whitespace-nowrap">
+                          {new Date(h.ts).toLocaleString("ar-SA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            day: "numeric",
+                            month: "short",
+                          })}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

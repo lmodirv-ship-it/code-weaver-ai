@@ -56,7 +56,8 @@ function extractContext(html: string, url: string): string {
     .trim()
     .slice(0, 4000);
 
-  return [
+  const pageList = Array.from(pages).sort();
+  const text = [
     `URL: ${url}`,
     lang && `HTML lang: ${lang}`,
     title && `Title: ${title}`,
@@ -65,10 +66,12 @@ function extractContext(html: string, url: string): string {
     h1.length && `H1: ${h1.join(" | ")}`,
     h2.length && `H2: ${h2.join(" | ")}`,
     navLinks.length && `Nav/links sample: ${navLinks.join(" · ")}`,
+    pageList.length && `Internal pages detected (${pageList.length}): ${pageList.slice(0, 30).join(" · ")}`,
     body && `Visible text (truncated): ${body}`,
   ]
     .filter(Boolean)
     .join("\n");
+  return { text, pages: pageList };
 }
 
 export const analyzeWebsite = createServerFn({ method: "POST" })

@@ -57,6 +57,87 @@ function Index() {
   const [analyzeError, setAnalyzeError] = useState<string>("");
   const runAnalyze = useServerFn(analyzeWebsite);
 
+  // Smart assistant (mascot + voice + log)
+  const [logEntries, setLogEntries] = useState<string[]>([]);
+  const [mascotActive, setMascotActive] = useState<boolean>(false);
+  const [mascotPos, setMascotPos] = useState<{ top: string; left: string }>({ top: "75%", left: "10%" });
+  const [mascotMessage, setMascotMessage] = useState<string>("");
+  const [lastSpeech, setLastSpeech] = useState<string>("");
+  const tourTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const addLog = (msg: string) => {
+    setLogEntries((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev].slice(0, 20));
+  };
+
+  const speak = (text: string) => {
+    if (!text) return;
+    setLastSpeech(text);
+    setMascotMessage(text);
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === "ar" ? "ar-SA" : "en-US";
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const stopTour = () => {
+    if (tourTimerRef.current) {
+      clearInterval(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+    setMascotActive(false);
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
+    }
+  };
+
+  const startMascotTour = () => {
+    stopTour();
+    const sections = lang === "ar"
+      ? [
+          { name: "الشريط العلوي", desc: "يحتوي على الشعار وقائمة التنقل، تصميمه واضح وثابت.", pos: { top: "8%", left: "50%" } },
+          { name: "قسم البطل", desc: "عنوان جذاب وصورة بارزة توجّه المستخدم للإجراء التالي.", pos: { top: "30%", left: "50%" } },
+          { name: "زر الدعوة للإجراء", desc: "يبرز بلون متضاد لزيادة التحويلات.", pos: { top: "45%", left: "78%" } },
+          { name: "لوحة الألوان", desc: "ألوان داكنة مع لمسات لامعة تناسب الهوية.", pos: { top: "65%", left: "18%" } },
+          { name: "نقاط التحسين", desc: "يُنصح بتحسين السرعة وإضافة آراء العملاء.", pos: { top: "82%", left: "70%" } },
+        ]
+      : [
+          { name: "Header", desc: "Logo and nav, clean and consistent layout.", pos: { top: "8%", left: "50%" } },
+          { name: "Hero", desc: "Strong headline with visual to guide the user.", pos: { top: "30%", left: "50%" } },
+          { name: "CTA Button", desc: "Contrasting color maximizes conversions.", pos: { top: "45%", left: "78%" } },
+          { name: "Color palette", desc: "Dark theme with accent highlights matches the brand.", pos: { top: "65%", left: "18%" } },
+          { name: "Improvements", desc: "Improve load speed and add customer reviews.", pos: { top: "82%", left: "70%" } },
+        ];
+    setMascotActive(true);
+    let step = 0;
+    const tick = () => {
+      if (step >= sections.length) {
+        stopTour();
+        addLog(lang === "ar" ? "🏁 اكتمل التحليل التفاعلي" : "🏁 Interactive tour complete");
+        speak(lang === "ar" ? "انتهيت من شرح الأقسام." : "Done explaining the sections.");
+        setMascotPos({ top: "85%", left: "85%" });
+        return;
+      }
+      const s = sections[step];
+      setMascotPos(s.pos);
+      addLog(`🔍 ${s.name} — ${s.desc}`);
+      speak(`${s.name}. ${s.desc}`);
+      step++;
+    };
+    tick();
+    tourTimerRef.current = setInterval(tick, 4500);
+  };
+
+  useEffect(() => {
+    return () => stopTour();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     setProjects(listProjects());
     handleGenerate();

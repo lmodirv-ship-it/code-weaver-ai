@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 const { saveAs } = FileSaver;
+import { useServerFn } from "@tanstack/react-start";
 import { generateWebsite, type TemplateName } from "@/lib/website-generator";
 import {
   listProjects,
@@ -10,6 +11,7 @@ import {
   deleteProject,
   type Project,
 } from "@/lib/projects-store";
+import { analyzeWebsite } from "@/lib/analyze.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({

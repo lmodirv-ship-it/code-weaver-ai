@@ -144,6 +144,12 @@ export function applyFeedback(state: ModelState, idx: number, fb: 1 | -1): Model
   return state;
 }
 
+export function clearHistory(state: ModelState): ModelState {
+  state.history = [];
+  saveState(state);
+  return state;
+}
+
 export function record(state: ModelState, q: string, a: string): ModelState {
   state.history.push({ q, a, feedback: 0, ts: Date.now() });
   if (state.history.length > 500) state.history.shift();

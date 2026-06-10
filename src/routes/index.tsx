@@ -468,7 +468,12 @@ function Index() {
       });
       setAnalysis(res.description || "");
       if (res.screenshotUrl) setAnalyzedScreenshot(res.screenshotUrl);
-      addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
+      setDetectedPages(res.pages || []);
+      addLog(
+        lang === "ar"
+          ? `✅ وصل التقرير — عدد الصفحات: ${res.pageCount ?? 0}`
+          : `✅ Report ready — pages: ${res.pageCount ?? 0}`,
+      );
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");
       addLog(`❌ ${(e as Error).message || "Error"}`);

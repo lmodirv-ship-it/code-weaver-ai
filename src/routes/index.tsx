@@ -39,6 +39,8 @@ const EXAMPLES = [
 ];
 
 function Index() {
+  const [mode, setMode] = useState<"create" | "describe">("create");
+  const [lang, setLang] = useState<"ar" | "en">("ar");
   const [description, setDescription] = useState<string>(EXAMPLES[0]);
   const [template, setTemplate] = useState<TemplateName>("default");
   const [html, setHtml] = useState<string>("");
@@ -46,6 +48,14 @@ function Index() {
   const [projectName, setProjectName] = useState<string>("");
   const [tab, setTab] = useState<"preview" | "code" | "projects">("preview");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Describe-existing-site state
+  const [siteUrl, setSiteUrl] = useState<string>("");
+  const [imageDataUrl, setImageDataUrl] = useState<string>("");
+  const [analysis, setAnalysis] = useState<string>("");
+  const [analyzing, setAnalyzing] = useState<boolean>(false);
+  const [analyzeError, setAnalyzeError] = useState<string>("");
+  const runAnalyze = useServerFn(analyzeWebsite);
 
   useEffect(() => {
     setProjects(listProjects());

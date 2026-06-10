@@ -289,49 +289,38 @@ function Index() {
 
         {/* Right panel — TV inside box inside box */}
         <section className="flex flex-col">
-          {/* Outer box (wooden cabinet) */}
+          {/* Outer box */}
           <div
-            className="relative rounded-[36px] p-5 sm:p-7 border-2 border-amber-900/60 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.55)]"
-            style={{
-              backgroundImage:
-                "linear-gradient(135deg, #6b3f1d 0%, #8a5a2b 35%, #5a3216 70%, #4a2a12 100%)",
-            }}
+            className="relative rounded-2xl p-1 border border-zinc-950 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)]"
+            style={{ background: "#0a0a0a" }}
           >
             {/* Outer box corner bolts */}
-            <span className="absolute top-3 left-3 w-2.5 h-2.5 rounded-full bg-amber-200/70 shadow-inner" />
-            <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-amber-200/70 shadow-inner" />
-            <span className="absolute bottom-3 left-3 w-2.5 h-2.5 rounded-full bg-amber-200/70 shadow-inner" />
-            <span className="absolute bottom-3 right-3 w-2.5 h-2.5 rounded-full bg-amber-200/70 shadow-inner" />
-            <div className="text-center mb-3 text-[11px] tracking-widest font-mono text-amber-100/80">
-              ── SMART · CABINET ──
-            </div>
+            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
+            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
+            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
+            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
 
-            {/* Middle box (metal frame) */}
-            <div className="rounded-[26px] p-4 sm:p-5 bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 border border-slate-500/60 shadow-[inset_0_2px_6px_rgba(255,255,255,0.6),inset_0_-3px_8px_rgba(0,0,0,0.25)]">
-              <div className="flex items-center justify-between mb-3 text-[10px] font-mono text-slate-700">
-                <span>MODEL · TV-58</span>
-                <span>● POWER</span>
-              </div>
-
+            {/* Middle box */}
+            <div className="rounded-xl p-1 bg-[#111] border border-zinc-900 shadow-inner">
               {/* Inner box (TV body) */}
-              <div className="relative rounded-[22px] p-4 sm:p-5 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.7)]">
+              <div className="relative rounded-lg p-2 bg-[#000] border border-zinc-800 shadow-[0_10px_30px_-8px_rgba(0,0,0,0.9)]">
                 {/* TV bezel top controls */}
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <span className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="ml-2 text-[11px] text-zinc-400 font-mono">LIVE · شاشة المعاينة</span>
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_6px_rgba(220,38,38,0.6)]" />
+                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                    <span className="w-2 h-2 rounded-full bg-green-600" />
+                    <span className="ml-1.5 text-[10px] text-zinc-500 font-mono">LIVE · شاشة المعاينة</span>
                   </div>
-                  <div className="flex gap-1 bg-zinc-950/60 rounded-lg p-1">
+                  <div className="flex gap-1 bg-zinc-950 rounded-md p-0.5">
                     {(["preview", "code"] as const).map((t) => (
                       <button
                         key={t}
                         onClick={() => setTab(t)}
-                        className={`text-xs px-3 py-1 rounded-md font-medium transition ${
+                        className={`text-[11px] px-2 py-0.5 rounded font-medium transition ${
                           tab === t
-                            ? "bg-zinc-100 text-zinc-900"
-                            : "text-zinc-400 hover:text-zinc-100"
+                            ? "bg-zinc-200 text-zinc-900"
+                            : "text-zinc-500 hover:text-zinc-200"
                         }`}
                       >
                         {t === "preview" ? "🌐 معاينة" : "📄 الكود"}
@@ -341,20 +330,20 @@ function Index() {
                 </div>
 
                 {/* Screen */}
-                <div className="relative rounded-2xl overflow-hidden bg-black ring-2 ring-zinc-700/80 shadow-inner aspect-video">
+                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video">
                   <div
-                    className="pointer-events-none absolute inset-0 z-10 opacity-[0.08] mix-blend-overlay"
+                    className="pointer-events-none absolute inset-0 z-10 opacity-[0.06] mix-blend-overlay"
                     style={{
                       backgroundImage:
-                        "repeating-linear-gradient(0deg, rgba(255,255,255,0.6) 0 1px, transparent 1px 3px)",
+                        "repeating-linear-gradient(0deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 3px)",
                     }}
                   />
-                  <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl shadow-[inset_0_0_120px_rgba(0,0,0,0.65)]" />
+                  <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
                   {!html ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
-                      <div className="text-5xl mb-3 animate-pulse">📺</div>
-                      <p className="text-sm">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500">
+                      <div className="text-4xl mb-2 animate-pulse">📺</div>
+                      <p className="text-xs">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>
                     </div>
                   ) : tab === "preview" ? (
                     <iframe
@@ -365,36 +354,24 @@ function Index() {
                       sandbox="allow-scripts allow-forms allow-modals"
                     />
                   ) : (
-                    <pre className="absolute inset-0 overflow-auto p-4 text-xs bg-zinc-950 text-emerald-300 font-mono leading-relaxed">
+                    <pre className="absolute inset-0 overflow-auto p-3 text-[11px] bg-zinc-950 text-emerald-300 font-mono leading-relaxed">
                       <code>{html}</code>
                     </pre>
                   )}
                 </div>
 
                 {/* TV info bar */}
-                <div className="flex justify-between items-center mt-3 px-2 text-[11px] text-zinc-400 font-mono">
+                <div className="flex justify-between items-center mt-2 px-1 text-[10px] text-zinc-600 font-mono">
                   <span>CH-01 · AR/EN</span>
                   <span>{html ? `${(html.length / 1024).toFixed(1)} KB` : "—"}</span>
                 </div>
               </div>
-
-              {/* Middle box bottom (speakers) */}
-              <div className="mt-3 flex items-center justify-between gap-3 px-2">
-                <div className="flex-1 h-3 rounded-full bg-[repeating-linear-gradient(90deg,#475569_0_3px,transparent_3px_6px)] opacity-70" />
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
-                <div className="flex-1 h-3 rounded-full bg-[repeating-linear-gradient(90deg,#475569_0_3px,transparent_3px_6px)] opacity-70" />
-              </div>
-            </div>
-
-            {/* Outer box bottom label */}
-            <div className="text-center mt-3 text-[10px] tracking-widest font-mono text-amber-100/70">
-              ✦ HANDCRAFTED · DESIGN · BOX ✦
             </div>
           </div>
 
           {/* Stand */}
-          <div className="mx-auto mt-2 h-3 w-40 bg-gradient-to-b from-amber-900 to-amber-950 rounded-b-xl shadow-md" />
-          <div className="mx-auto h-1.5 w-64 bg-amber-950 rounded-full shadow-md" />
+          <div className="mx-auto mt-1 h-2 w-28 bg-gradient-to-b from-zinc-900 to-black rounded-b-lg shadow-md" />
+          <div className="mx-auto h-1 w-48 bg-black rounded-full shadow-md" />
         </section>
       </main>
 

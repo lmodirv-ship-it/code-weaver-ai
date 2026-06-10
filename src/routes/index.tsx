@@ -184,7 +184,7 @@ function Index() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={6}
+              rows={3}
               className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none placeholder:text-zinc-500"
               placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
             />

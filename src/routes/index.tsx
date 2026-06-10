@@ -273,6 +273,8 @@ function Index() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const recordingCleanupRef = useRef<(() => void) | null>(null);
+  const [recordingProgress, setRecordingProgress] = useState(0);
+  const recordingProgressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const pickRecorderMime = () => {
     const candidates = [
@@ -381,6 +383,13 @@ function Index() {
 
       recorder.start(1000);
       setIsRecording(true);
+      setRecordingProgress(1);
+      recordingProgressTimerRef.current = setInterval(() => {
+        setRecordingProgress((prev) => {
+          if (prev >= 99) return prev;
+          return Math.min(99, prev + 0.25);
+        });
+      }, 100);
       addLog(lang === "ar" ? "🎥 بدأ تسجيل شاشة التلفاز" : "🎥 TV recording started");
     } catch (err) {
       console.error(err);
@@ -397,6 +406,11 @@ function Index() {
       recordingCleanupRef.current();
       recordingCleanupRef.current = null;
     }
+    if (recordingProgressTimerRef.current) {
+      clearInterval(recordingProgressTimerRef.current);
+      recordingProgressTimerRef.current = null;
+    }
+    setRecordingProgress(100);
     setIsRecording(false);
   };
 
@@ -918,6 +932,27 @@ function Index() {
                   <span>CH-01 · AR/EN</span>
                   <span>{html ? `${(html.length / 1024).toFixed(1)} KB` : "—"}</span>
                 </div>
+
+                {/* Recording progress bar */}
+                {isRecording && (
+                  <div className="mt-2 w-full">
+                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden ring-1 ring-zinc-700">
+                      <div
+                        className="h-full bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-full transition-all duration-100 ease-linear"
+                        style={{ width: `${Math.max(1, Math.min(100, recordingProgress))}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center mt-1 px-1">
+                      <span className="flex items-center gap-1 text-[10px] text-red-400 font-mono animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+                        REC
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-mono">
+                        {Math.max(1, Math.min(100, Math.round(recordingProgress)))}%
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -752,6 +752,19 @@ function Index() {
                   <p className="mt-2 text-xs text-red-400">{analyzeError}</p>
                 )}
 
+                {detectedPages.length > 0 && (
+                  <div className="mt-3 bg-zinc-950 border border-zinc-800 rounded-lg p-2.5">
+                    <p className="text-xs font-semibold text-emerald-300">
+                      📄 {lang === "ar" ? "عدد الصفحات المكتشفة" : "Pages detected"}: {detectedPages.length}
+                    </p>
+                    <ul dir="ltr" className="mt-1 max-h-32 overflow-auto text-[11px] text-zinc-300 font-mono space-y-0.5">
+                      {detectedPages.slice(0, 50).map((p) => (
+                        <li key={p} className="truncate">• {p}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {analysis && (
                   <div
                     dir={lang === "ar" ? "rtl" : "ltr"}

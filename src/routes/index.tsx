@@ -1046,6 +1046,42 @@ function Index() {
             </div>
           </div>
 
+          {/* Sound effects library */}
+          <div className="mt-5 bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+            <h3 className="text-sm font-semibold text-zinc-100 mb-3">
+              🎵 {lang === "ar" ? "مكتبة الأصوات" : "Sound effects"}
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {([
+                { id: "click", ar: "🖱️ نقرة", en: "🖱️ Click" },
+                { id: "ding", ar: "🔔 جرس", en: "🔔 Ding" },
+                { id: "success", ar: "✅ نجاح", en: "✅ Success" },
+                { id: "error", ar: "❌ خطأ", en: "❌ Error" },
+                { id: "notify", ar: "📨 تنبيه", en: "📨 Notify" },
+                { id: "swoosh", ar: "💨 انتقال", en: "💨 Swoosh" },
+                { id: "applause", ar: "👏 تصفيق", en: "👏 Applause" },
+                { id: "magic", ar: "✨ سحر", en: "✨ Magic" },
+              ] as const).map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    playSfx(s.id);
+                    addLog(`🎵 ${lang === "ar" ? s.ar : s.en}`);
+                  }}
+                  className="text-xs px-2 py-2 rounded-lg bg-zinc-800 text-zinc-100 hover:bg-zinc-700 border border-zinc-700"
+                >
+                  {lang === "ar" ? s.ar : s.en}
+                </button>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-zinc-500">
+              {lang === "ar"
+                ? "اضغط أي صوت لتجربته. تُولَّد الأصوات في المتصفح دون أي ملفات خارجية."
+                : "Click any sound to preview. Generated in-browser, no external files."}
+            </p>
+          </div>
+
+
         </section>
       </main>
 

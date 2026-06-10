@@ -129,7 +129,7 @@ function Index() {
               <h1 className="text-base sm:text-lg font-bold text-white">
                 مصمم المواقع الذكي
               </h1>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-300">
                 Smart Website Designer · AR / EN
               </p>
             </div>
@@ -144,21 +144,21 @@ function Index() {
             <button
               onClick={handleOpenInNewTab}
               disabled={!html}
-              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-600 bg-zinc-900/60 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:text-zinc-400"
             >
               فتح في نافذة
             </button>
             <button
               onClick={handleDownloadHtml}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg border border-zinc-600 bg-zinc-900/60 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:text-zinc-400"
             >
               HTML
             </button>
             <button
               onClick={() => handleExportZip()}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg bg-white text-black font-semibold hover:bg-zinc-200 disabled:opacity-60 disabled:text-zinc-500"
             >
               تصدير ZIP
             </button>
@@ -178,7 +178,7 @@ function Index() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={6}
-              className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none"
+              className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none placeholder:text-zinc-500"
               placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
             />
 
@@ -187,7 +187,7 @@ function Index() {
                 <button
                   key={i}
                   onClick={() => setDescription(ex)}
-                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
                 >
                   مثال {i + 1}
                 </button>
@@ -196,7 +196,7 @@ function Index() {
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-zinc-300 mb-1">
                   🎨 القالب
                 </label>
                 <select
@@ -210,14 +210,14 @@ function Index() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-zinc-300 mb-1">
                   💾 اسم المشروع
                 </label>
                 <input
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   placeholder="my-site"
-                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ function Index() {
               <button
                 onClick={handleSave}
                 disabled={!html}
-                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-50"
+                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-60 disabled:text-zinc-300"
               >
                 💾 حفظ
               </button>
@@ -244,7 +244,7 @@ function Index() {
               💼 المشاريع المحفوظة ({projects.length})
             </h3>
             {projects.length === 0 ? (
-              <p className="text-xs text-zinc-500 py-4 text-center">
+              <p className="text-xs text-zinc-400 py-4 text-center">
                 لا توجد مشاريع بعد. ولّد موقعاً واضغط حفظ.
               </p>
             ) : (
@@ -278,7 +278,7 @@ function Index() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 truncate">
+                    <p className="text-[11px] text-zinc-400 mt-0.5 truncate">
                       {p.template} · {new Date(p.createdAt).toLocaleString()}
                     </p>
                   </li>
@@ -353,7 +353,7 @@ function Index() {
                     <span className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_6px_rgba(220,38,38,0.6)]" />
                     <span className="w-2 h-2 rounded-full bg-yellow-500" />
                     <span className="w-2 h-2 rounded-full bg-green-600" />
-                    <span className="ml-1.5 text-[10px] text-zinc-500 font-mono">LIVE · شاشة المعاينة</span>
+                    <span className="ml-1.5 text-[10px] text-zinc-400 font-mono">LIVE · شاشة المعاينة</span>
                   </div>
                   <div className="flex gap-1 bg-zinc-950 rounded-md p-0.5">
                     {(["preview", "code"] as const).map((t) => (
@@ -363,7 +363,7 @@ function Index() {
                         className={`text-[11px] px-2 py-0.5 rounded font-medium transition ${
                           tab === t
                             ? "bg-zinc-200 text-zinc-900"
-                            : "text-zinc-500 hover:text-zinc-200"
+                            : "text-zinc-400 hover:text-zinc-200"
                         }`}
                       >
                         {t === "preview" ? "🌐 معاينة" : "📄 الكود"}
@@ -384,7 +384,7 @@ function Index() {
                   <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
                   {!html ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                       <div className="text-4xl mb-2 animate-pulse">📺</div>
                       <p className="text-xs">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>
                     </div>
@@ -418,7 +418,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="text-center text-xs text-zinc-500 py-6">
+      <footer className="text-center text-xs text-zinc-400 py-6">
         مولّد مواقع ذكي — يدعم العربية والإنجليزية · بدون خادم، يعمل بالكامل في متصفحك.
       </footer>
     </div>

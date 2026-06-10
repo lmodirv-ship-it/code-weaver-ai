@@ -117,7 +117,7 @@ function Index() {
   }, [html]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 40%, #000000 100%)" }}>
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">

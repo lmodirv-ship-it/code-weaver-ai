@@ -624,6 +624,29 @@ function Index() {
                       <code>{html}</code>
                     </pre>
                   )}
+
+                  {/* Smart mascot overlay (analyze mode) */}
+                  {mode === "describe" && mascotActive && (
+                    <div className="pointer-events-none absolute inset-0 z-20">
+                      <div
+                        className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-out"
+                        style={{ top: mascotPos.top, left: mascotPos.left }}
+                      >
+                        <div className="relative">
+                          <div className="text-3xl animate-bounce drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">🤖</div>
+                          <span className="absolute -inset-2 rounded-full bg-fuchsia-500/20 blur-xl animate-pulse" />
+                        </div>
+                        {mascotMessage && (
+                          <div
+                            dir={lang === "ar" ? "rtl" : "ltr"}
+                            className="mt-2 max-w-[220px] bg-zinc-900/95 border border-fuchsia-500/40 text-[11px] text-zinc-100 rounded-lg px-2.5 py-1.5 shadow-lg shadow-fuchsia-500/20"
+                          >
+                            {mascotMessage}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* TV info bar */}

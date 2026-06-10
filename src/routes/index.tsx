@@ -175,6 +175,8 @@ function Index() {
   // ── TV screen recording (getDisplayMedia + cropped Canvas + MediaRecorder) ──
   const tvScreenRef = useRef<HTMLDivElement>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string>("");
+  const [recordedVideoMime, setRecordedVideoMime] = useState<string>("");
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const recordingCleanupRef = useRef<(() => void) | null>(null);

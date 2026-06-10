@@ -256,7 +256,7 @@ function Index() {
             {mode === "create" ? (
               <>
                 <label className="block text-sm font-semibold text-zinc-100 mb-2">
-                  📝 {lang === "ar" ? "صف موقعك (عربي أو إنجليزي)" : "Describe your website"}
+                  &nbsp;{lang === "ar" ? "صف موقعك (عربي أو إنجليزي)" : "Describe your website"}
                 </label>
                 <textarea
                   value={description}

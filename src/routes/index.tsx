@@ -380,7 +380,7 @@ function Index() {
                 </div>
 
                 {/* Screen */}
-                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[45vh]">
+                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[28vh]">
                   <div
                     className="pointer-events-none absolute inset-0 z-10 opacity-[0.06] mix-blend-overlay"
                     style={{

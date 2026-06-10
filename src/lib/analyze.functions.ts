@@ -8,7 +8,7 @@ const InputSchema = z.object({
 });
 
 // Extract clean, AI-friendly context from raw HTML
-function extractContext(html: string, url: string): string {
+function extractContext(html: string, url: string): { text: string; pages: string[] } {
   const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? "";
   const all = (re: RegExp) => {
     const out: string[] = [];
@@ -29,6 +29,22 @@ function extractContext(html: string, url: string): string {
     .filter((s) => s.length > 1 && s.length < 40)
     .slice(0, 20);
 
+  // Collect internal page URLs (same host) for page-count detection
+  const hrefs = Array.from(html.matchAll(/<a[^>]+href=["']([^"'#]+)["']/gi)).map((m) => m[1]);
+  const pages = new Set<string>();
+  try {
+    const base = new URL(url);
+    pages.add(base.pathname || "/");
+    for (const h of hrefs) {
+      try {
+        const u = new URL(h, base);
+        if (u.host !== base.host) continue;
+        if (/\.(png|jpe?g|gif|svg|webp|ico|css|js|pdf|zip|mp4|webm|woff2?)$/i.test(u.pathname)) continue;
+        pages.add(u.pathname || "/");
+      } catch { /* ignore */ }
+    }
+  } catch { /* ignore */ }
+
   // Visible body text
   const body = (html.match(/<body[\s\S]*?<\/body>/i)?.[0] ?? html)
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
@@ -40,7 +56,8 @@ function extractContext(html: string, url: string): string {
     .trim()
     .slice(0, 4000);
 
-  return [
+  const pageList = Array.from(pages).sort();
+  const text = [
     `URL: ${url}`,
     lang && `HTML lang: ${lang}`,
     title && `Title: ${title}`,
@@ -49,10 +66,12 @@ function extractContext(html: string, url: string): string {
     h1.length && `H1: ${h1.join(" | ")}`,
     h2.length && `H2: ${h2.join(" | ")}`,
     navLinks.length && `Nav/links sample: ${navLinks.join(" · ")}`,
+    pageList.length && `Internal pages detected (${pageList.length}): ${pageList.slice(0, 30).join(" · ")}`,
     body && `Visible text (truncated): ${body}`,
   ]
     .filter(Boolean)
     .join("\n");
+  return { text, pages: pageList };
 }
 
 export const analyzeWebsite = createServerFn({ method: "POST" })
@@ -69,6 +88,7 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
     // Fetch + extract clean context
     let pageContext = "";
     let screenshotUrl = "";
+    let pages: string[] = [];
     if (url) {
       try {
         const res = await fetch(url, {
@@ -80,11 +100,12 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
           signal: AbortSignal.timeout(15000),
         });
         const html = await res.text();
-        pageContext = extractContext(html, url);
+        const ctx = extractContext(html, url);
+        pageContext = ctx.text;
+        pages = ctx.pages;
       } catch (e) {
         pageContext = `(Could not fetch page: ${(e as Error).message}) URL: ${url}`;
       }
-      // Public screenshot service (no key) — lets the vision model see the real site
       screenshotUrl = `https://image.thum.io/get/width/1280/crop/900/noanimate/${url}`;
     }
 
@@ -147,5 +168,7 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
     return {
       description: typeof content === "string" ? content : JSON.stringify(content),
       screenshotUrl,
+      pages,
+      pageCount: pages.length,
     };
   });

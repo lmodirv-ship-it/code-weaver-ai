@@ -66,6 +66,7 @@ function Index() {
   const [analyzeError, setAnalyzeError] = useState<string>("");
   const [analyzedSiteUrl, setAnalyzedSiteUrl] = useState<string>("");
   const [analyzedScreenshot, setAnalyzedScreenshot] = useState<string>("");
+  const [detectedPages, setDetectedPages] = useState<string[]>([]);
   const runAnalyze = useServerFn(analyzeWebsite);
 
   // Smart assistant (mascot + voice + log)
@@ -467,7 +468,12 @@ function Index() {
       });
       setAnalysis(res.description || "");
       if (res.screenshotUrl) setAnalyzedScreenshot(res.screenshotUrl);
-      addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
+      setDetectedPages(res.pages || []);
+      addLog(
+        lang === "ar"
+          ? `✅ وصل التقرير — عدد الصفحات: ${res.pageCount ?? 0}`
+          : `✅ Report ready — pages: ${res.pageCount ?? 0}`,
+      );
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");
       addLog(`❌ ${(e as Error).message || "Error"}`);
@@ -744,6 +750,19 @@ function Index() {
 
                 {analyzeError && (
                   <p className="mt-2 text-xs text-red-400">{analyzeError}</p>
+                )}
+
+                {detectedPages.length > 0 && (
+                  <div className="mt-3 bg-zinc-950 border border-zinc-800 rounded-lg p-2.5">
+                    <p className="text-xs font-semibold text-emerald-300">
+                      📄 {lang === "ar" ? "عدد الصفحات المكتشفة" : "Pages detected"}: {detectedPages.length}
+                    </p>
+                    <ul dir="ltr" className="mt-1 max-h-32 overflow-auto text-[11px] text-zinc-300 font-mono space-y-0.5">
+                      {detectedPages.slice(0, 50).map((p) => (
+                        <li key={p} className="truncate">• {p}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
 
                 {analysis && (
@@ -1157,13 +1176,21 @@ function Index() {
                     controls
                     className="w-full rounded-lg bg-black aspect-video"
                   />
-                  <a
-                    href={recordedVideoUrl}
-                    download={`tv_recording_${Date.now()}.${recordedVideoMime.includes("mp4") ? "mp4" : "webm"}`}
-                    className="block text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                  <button
+                    onClick={async () => {
+                      try {
+                        const r = await fetch(recordedVideoUrl);
+                        const blob = await r.blob();
+                        const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
+                        saveAs(blob, `tv_recording_${Date.now()}.${ext}`);
+                      } catch (e) {
+                        addLog(`❌ ${(e as Error).message}`);
+                      }
+                    }}
+                    className="w-full text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
                   >
                     📥 {lang === "ar" ? "تحميل الفيديو" : "Download video"}
-                  </a>
+                  </button>
                 </div>
               ) : (
                 <p className="text-xs text-zinc-500">

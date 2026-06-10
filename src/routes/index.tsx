@@ -239,12 +239,12 @@ function Index() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900 mb-2">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
+            <h3 className="text-sm font-semibold text-zinc-100 mb-2">
               💼 المشاريع المحفوظة ({projects.length})
             </h3>
             {projects.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">
+              <p className="text-xs text-zinc-500 py-4 text-center">
                 لا توجد مشاريع بعد. ولّد موقعاً واضغط حفظ.
               </p>
             ) : (
@@ -252,12 +252,12 @@ function Index() {
                 {projects.map((p) => (
                   <li
                     key={p.id}
-                    className="border border-slate-200 rounded-lg p-2.5 hover:bg-slate-50 group"
+                    className="border border-zinc-800 rounded-lg p-2.5 hover:bg-zinc-800 group"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <button
                         onClick={() => handleLoad(p)}
-                        className="text-sm font-medium text-slate-900 text-right truncate flex-1"
+                        className="text-sm font-medium text-zinc-100 text-right truncate flex-1"
                       >
                         {p.name}
                       </button>
@@ -265,20 +265,20 @@ function Index() {
                         <button
                           onClick={() => handleExportZip(p)}
                           title="تصدير"
-                          className="text-xs px-2 py-1 rounded hover:bg-slate-200"
+                          className="text-xs px-2 py-1 rounded hover:bg-zinc-700 text-zinc-300"
                         >
                           📦
                         </button>
                         <button
                           onClick={() => handleDelete(p.id)}
                           title="حذف"
-                          className="text-xs px-2 py-1 rounded hover:bg-red-100 text-red-600"
+                          className="text-xs px-2 py-1 rounded hover:bg-red-900/30 text-red-400"
                         >
                           🗑
                         </button>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    <p className="text-[11px] text-zinc-500 mt-0.5 truncate">
                       {p.template} · {new Date(p.createdAt).toLocaleString()}
                     </p>
                   </li>

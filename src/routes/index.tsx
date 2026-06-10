@@ -1176,13 +1176,21 @@ function Index() {
                     controls
                     className="w-full rounded-lg bg-black aspect-video"
                   />
-                  <a
-                    href={recordedVideoUrl}
-                    download={`tv_recording_${Date.now()}.${recordedVideoMime.includes("mp4") ? "mp4" : "webm"}`}
-                    className="block text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                  <button
+                    onClick={async () => {
+                      try {
+                        const r = await fetch(recordedVideoUrl);
+                        const blob = await r.blob();
+                        const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
+                        saveAs(blob, `tv_recording_${Date.now()}.${ext}`);
+                      } catch (e) {
+                        addLog(`❌ ${(e as Error).message}`);
+                      }
+                    }}
+                    className="w-full text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
                   >
                     📥 {lang === "ar" ? "تحميل الفيديو" : "Download video"}
-                  </a>
+                  </button>
                 </div>
               ) : (
                 <p className="text-xs text-zinc-500">

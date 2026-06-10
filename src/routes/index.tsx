@@ -170,15 +170,15 @@ function Index() {
         {/* Description panel — below the TV */}
         <aside className="space-y-4 order-2">
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
+            <label className="block text-sm font-semibold text-zinc-100 mb-2">
               📝 صف موقعك (عربي أو إنجليزي)
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={6}
-              className="w-full text-sm rounded-xl border border-slate-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none resize-none"
+              className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none"
               placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
             />
 
@@ -187,7 +187,7 @@ function Index() {
                 <button
                   key={i}
                   onClick={() => setDescription(ex)}
-                  className="text-xs px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
                 >
                   مثال {i + 1}
                 </button>
@@ -196,13 +196,13 @@ function Index() {
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
                   🎨 القالب
                 </label>
                 <select
                   value={template}
                   onChange={(e) => setTemplate(e.target.value as TemplateName)}
-                  className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2 bg-white"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
                 >
                   <option value="default">Default (Modern)</option>
                   <option value="bootstrap">Bootstrap 5</option>
@@ -210,14 +210,14 @@ function Index() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
                   💾 اسم المشروع
                 </label>
                 <input
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   placeholder="my-site"
-                  className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
                 />
               </div>
             </div>

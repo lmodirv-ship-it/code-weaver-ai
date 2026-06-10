@@ -383,6 +383,13 @@ function Index() {
 
       recorder.start(1000);
       setIsRecording(true);
+      setRecordingProgress(1);
+      recordingProgressTimerRef.current = setInterval(() => {
+        setRecordingProgress((prev) => {
+          if (prev >= 99) return prev;
+          return Math.min(99, prev + 0.25);
+        });
+      }, 100);
       addLog(lang === "ar" ? "🎥 بدأ تسجيل شاشة التلفاز" : "🎥 TV recording started");
     } catch (err) {
       console.error(err);

@@ -907,6 +907,145 @@ function Index() {
               </div>
             </div>
           </div>
+
+          {/* Voice controls + recorded video preview + explainer person */}
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Voice picker */}
+            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+              <h3 className="text-sm font-semibold text-zinc-100 mb-3">
+                🎙️ {lang === "ar" ? "إعدادات الصوت" : "Voice settings"}
+              </h3>
+              <div className="space-y-2">
+                <div className="flex gap-1 bg-zinc-950 rounded-md p-0.5 text-[10px]">
+                  {(["all", "ar", "fr", "en"] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setVoiceLangFilter(f)}
+                      className={`flex-1 px-2 py-1 rounded ${
+                        voiceLangFilter === f ? "bg-zinc-200 text-zinc-900" : "text-zinc-400 hover:text-zinc-200"
+                      }`}
+                    >
+                      {f === "all" ? (lang === "ar" ? "الكل" : "All") : f.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+                <select
+                  value={selectedVoiceURI}
+                  onChange={(e) => setSelectedVoiceURI(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs rounded-md p-1.5"
+                >
+                  {(voiceLangFilter === "all"
+                    ? voices
+                    : voices.filter((v) => v.lang?.toLowerCase().startsWith(voiceLangFilter))
+                  ).map((v) => (
+                    <option key={v.voiceURI} value={v.voiceURI}>
+                      {v.name} ({v.lang})
+                    </option>
+                  ))}
+                  {voices.length === 0 && <option value="">{lang === "ar" ? "لا توجد أصوات" : "No voices"}</option>}
+                </select>
+                <label className="block text-[11px] text-zinc-400">
+                  {lang === "ar" ? "السرعة" : "Rate"}: {speechRate.toFixed(2)}
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={1.8}
+                    step={0.05}
+                    value={speechRate}
+                    onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </label>
+                <label className="block text-[11px] text-zinc-400">
+                  {lang === "ar" ? "الطبقة" : "Pitch"}: {speechPitch.toFixed(2)}
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={2}
+                    step={0.05}
+                    value={speechPitch}
+                    onChange={(e) => setSpeechPitch(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </label>
+                <button
+                  onClick={() =>
+                    speak(
+                      lang === "ar"
+                        ? "هذا اختبار للصوت المحدد. مرحباً بك في المساعد الذكي."
+                        : "This is a test of the selected voice. Welcome to the smart assistant.",
+                    )
+                  }
+                  className="w-full text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+                >
+                  🔉 {lang === "ar" ? "تجربة الصوت" : "Test voice"}
+                </button>
+              </div>
+            </div>
+
+            {/* Recorded video preview */}
+            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+              <h3 className="text-sm font-semibold text-zinc-100 mb-3">
+                📹 {lang === "ar" ? "الفيديو المسجّل" : "Recorded video"}
+              </h3>
+              {recordedVideoUrl ? (
+                <div className="space-y-2">
+                  <video
+                    src={recordedVideoUrl}
+                    controls
+                    className="w-full rounded-lg bg-black aspect-video"
+                  />
+                  <a
+                    href={recordedVideoUrl}
+                    download={`tv_recording_${Date.now()}.${recordedVideoMime.includes("mp4") ? "mp4" : "webm"}`}
+                    className="block text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                  >
+                    📥 {lang === "ar" ? "تحميل الفيديو" : "Download video"}
+                  </a>
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-500">
+                  {lang === "ar"
+                    ? "اضغط « تسجيل الشاشة » ثم « إنهاء وحفظ » لتظهر المعاينة هنا."
+                    : "Click Record then Stop & save to see the preview here."}
+                </p>
+              )}
+            </div>
+
+            {/* Explainer person */}
+            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 p-4 flex flex-col">
+              <h3 className="text-sm font-semibold text-zinc-100 mb-3">
+                🧑‍🏫 {lang === "ar" ? "الشارح الافتراضي" : "Virtual presenter"}
+              </h3>
+              <div className="flex-1 flex gap-3">
+                <div className="text-5xl select-none animate-pulse" aria-hidden>
+                  🧑‍💼
+                </div>
+                <div
+                  dir={lang === "ar" ? "rtl" : "ltr"}
+                  className="flex-1 bg-zinc-950/60 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200 min-h-[80px]"
+                >
+                  {mascotMessage ||
+                    (lang === "ar"
+                      ? "اختر الصوت من الأعلى، ثم اضغط على « جولة تفاعلية » وسأشرح لك كل قسم من الموقع بصوت احترافي."
+                      : "Pick a voice above, then click Interactive tour — I will narrate each section of the site professionally.")}
+                </div>
+              </div>
+              <button
+                onClick={() =>
+                  speak(
+                    lang === "ar"
+                      ? "مرحباً، أنا الشارح الافتراضي. سأقدّم لك الموقع قسماً قسماً مع شرح للألوان والمحتوى والتفاعل."
+                      : "Hello, I am your virtual presenter. I will walk you through the site section by section.",
+                  )
+                }
+                className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-fuchsia-600 text-white hover:bg-fuchsia-500"
+              >
+                🎤 {lang === "ar" ? "اشرح الموقع" : "Explain the site"}
+              </button>
+            </div>
+          </div>
+
         </section>
       </main>
 

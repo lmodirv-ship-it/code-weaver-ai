@@ -171,13 +171,17 @@ function Index() {
       return;
     }
     setAnalyzing(true);
+    addLog(lang === "ar" ? "🔍 بدء التحليل التفاعلي..." : "🔍 Starting interactive analysis...");
+    startMascotTour();
     try {
       const res = await runAnalyze({
         data: { url: siteUrl.trim(), imageDataUrl, lang },
       });
       setAnalysis(res.description || "");
+      addLog(lang === "ar" ? "✅ وصل تقرير الذكاء الاصطناعي" : "✅ AI report received");
     } catch (e) {
       setAnalyzeError((e as Error).message || "Error");
+      addLog(`❌ ${(e as Error).message || "Error"}`);
     } finally {
       setAnalyzing(false);
     }

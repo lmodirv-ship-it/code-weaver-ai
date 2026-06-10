@@ -88,6 +88,7 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
     // Fetch + extract clean context
     let pageContext = "";
     let screenshotUrl = "";
+    let pages: string[] = [];
     if (url) {
       try {
         const res = await fetch(url, {
@@ -99,11 +100,12 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
           signal: AbortSignal.timeout(15000),
         });
         const html = await res.text();
-        pageContext = extractContext(html, url);
+        const ctx = extractContext(html, url);
+        pageContext = ctx.text;
+        pages = ctx.pages;
       } catch (e) {
         pageContext = `(Could not fetch page: ${(e as Error).message}) URL: ${url}`;
       }
-      // Public screenshot service (no key) — lets the vision model see the real site
       screenshotUrl = `https://image.thum.io/get/width/1280/crop/900/noanimate/${url}`;
     }
 

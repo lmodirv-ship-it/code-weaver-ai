@@ -29,6 +29,22 @@ function extractContext(html: string, url: string): string {
     .filter((s) => s.length > 1 && s.length < 40)
     .slice(0, 20);
 
+  // Collect internal page URLs (same host) for page-count detection
+  const hrefs = Array.from(html.matchAll(/<a[^>]+href=["']([^"'#]+)["']/gi)).map((m) => m[1]);
+  const pages = new Set<string>();
+  try {
+    const base = new URL(url);
+    pages.add(base.pathname || "/");
+    for (const h of hrefs) {
+      try {
+        const u = new URL(h, base);
+        if (u.host !== base.host) continue;
+        if (/\.(png|jpe?g|gif|svg|webp|ico|css|js|pdf|zip|mp4|webm|woff2?)$/i.test(u.pathname)) continue;
+        pages.add(u.pathname || "/");
+      } catch { /* ignore */ }
+    }
+  } catch { /* ignore */ }
+
   // Visible body text
   const body = (html.match(/<body[\s\S]*?<\/body>/i)?.[0] ?? html)
     .replace(/<script[\s\S]*?<\/script>/gi, " ")

@@ -117,7 +117,7 @@ function Index() {
   }, [html]);
 
   return (
-    <div className="min-h-[200vh] bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -166,7 +166,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 pt-0 pb-[80vh] flex flex-col gap-6">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
         {/* Description panel — below the TV */}
         <aside className="space-y-4 order-2">
 
@@ -289,7 +289,7 @@ function Index() {
         </aside>
 
         {/* TV — full width, above the description */}
-        <section className="order-1 flex flex-col w-full -mt-[5cm]">
+        <section className="order-1 flex flex-col w-full">
 
 
           {/* Outer box — deepest frame with rim light */}

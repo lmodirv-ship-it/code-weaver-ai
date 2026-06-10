@@ -129,7 +129,7 @@ function Index() {
               <h1 className="text-base sm:text-lg font-bold text-white">
                 مصمم المواقع الذكي
               </h1>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-300">
                 Smart Website Designer · AR / EN
               </p>
             </div>

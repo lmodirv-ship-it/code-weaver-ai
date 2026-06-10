@@ -166,9 +166,9 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 pb-32 flex flex-col gap-6">
+      <main dir="rtl" className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 pb-32 flex flex-col lg:flex-row gap-6">
         {/* Description panel — below the TV */}
-        <aside className="space-y-4 order-2">
+        <aside className="space-y-4 order-2 lg:w-[360px] shrink-0">
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
@@ -296,7 +296,7 @@ function Index() {
         </aside>
 
         {/* TV — full width, above the description */}
-        <section className="order-1 flex flex-col w-full">
+        <section className="order-1 flex flex-col w-full lg:flex-1">
 
 
           {/* Outer box — deepest frame with rim light */}
@@ -380,7 +380,7 @@ function Index() {
                 </div>
 
                 {/* Screen */}
-                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[45vh]">
+                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[28vh]">
                   <div
                     className="pointer-events-none absolute inset-0 z-10 opacity-[0.06] mix-blend-overlay"
                     style={{

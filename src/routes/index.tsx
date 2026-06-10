@@ -291,12 +291,21 @@ function Index() {
         <section className="flex flex-col">
           {/* Outer box — deepest frame with rim light */}
           <div
-            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_-1px_0_rgba(0,0,0,0.6)]"
+            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_1.5px_0_rgba(255,255,255,0.14),inset_0_-1.5px_0_rgba(0,0,0,0.85),inset_1.5px_0_0_rgba(255,255,255,0.05),inset_-1.5px_0_0_rgba(0,0,0,0.7)]"
             style={{
               background:
                 "radial-gradient(120% 90% at 50% 0%, #1c1c1c 0%, #0c0c0c 50%, #050505 100%)",
             }}
           >
+            {/* Subtle wavy highlight band along the top inner edge */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-1 top-0 h-[3px] rounded-t-2xl opacity-70"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.22) 80%, transparent 100%)",
+              }}
+            />
             {/* Outer box corner bolts — metallic */}
             <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
             <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
@@ -305,20 +314,36 @@ function Index() {
 
             {/* Middle box — brushed metal */}
             <div
-              className="rounded-xl p-1 border border-zinc-900/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_-1px_0_rgba(0,0,0,0.85),0_4px_10px_-4px_rgba(0,0,0,0.75)]"
+              className="relative rounded-xl p-1 border border-zinc-900/80 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.16),inset_0_-1.5px_0_rgba(0,0,0,0.9),inset_1px_0_0_rgba(255,255,255,0.04),inset_-1px_0_0_rgba(0,0,0,0.75),0_4px_10px_-4px_rgba(0,0,0,0.75)]"
               style={{
                 background:
-                  "linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 50%, #141414 100%)",
+                  "linear-gradient(180deg, #1f1f1f 0%, #0e0e0e 55%, #161616 100%)",
               }}
             >
-              {/* Inner box (TV body) — glossy bezel */}
-              <div
-                className="relative rounded-lg p-2 border border-zinc-800/70 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.09),inset_0_-2px_4px_rgba(0,0,0,0.9)]"
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-2 top-0 h-px opacity-80"
                 style={{
                   background:
-                    "linear-gradient(180deg, #0c0c0c 0%, #000 45%, #060606 100%)",
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.35) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.35) 70%, transparent)",
+                }}
+              />
+              {/* Inner box (TV body) — glossy bezel */}
+              <div
+                className="relative rounded-lg p-2 border border-zinc-800/70 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.95),inset_0_1.5px_0_rgba(255,255,255,0.18),inset_0_-2px_4px_rgba(0,0,0,0.95),inset_1px_0_0_rgba(255,255,255,0.05),inset_-1px_0_0_rgba(0,0,0,0.8)]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #111 0%, #000 45%, #070707 100%)",
                 }}
               >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-1.5 top-0 h-px opacity-90"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.4) 75%, transparent)",
+                  }}
+                />
                 {/* TV bezel top controls */}
                 <div className="flex items-center justify-between mb-2 px-1">
                   <div className="flex items-center gap-1.5">

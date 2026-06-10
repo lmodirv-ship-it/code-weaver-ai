@@ -12,6 +12,7 @@ import {
   type Project,
 } from "@/lib/projects-store";
 import { analyzeWebsite } from "@/lib/analyze.functions";
+import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -285,6 +286,14 @@ function Index() {
   const [recordingProgress, setRecordingProgress] = useState(0);
   const recordingProgressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Video download tracking
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadDuration, setDownloadDuration] = useState(0);
+  const [downloadResult, setDownloadResult] = useState<"idle" | "downloading" | "success" | "error">("idle");
+  const [downloadMessage, setDownloadMessage] = useState("");
+  const downloadTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const downloadStartTimeRef = useRef<number>(0);
+
   const pickRecorderMime = () => {
     const candidates = [
       "video/mp4;codecs=h264,aac",
@@ -537,9 +546,29 @@ function Index() {
 
   const downloadVideoToChosenLocation = async () => {
     if (!recordedVideoUrl) return;
+    setDownloadResult("downloading");
+    setDownloadProgress(0);
+    setDownloadDuration(0);
+    setDownloadMessage("");
+    downloadStartTimeRef.current = Date.now();
+    if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
+    downloadTimerRef.current = setInterval(() => {
+      setDownloadDuration(Math.round((Date.now() - downloadStartTimeRef.current) / 100) / 10);
+      setDownloadProgress((prev) => {
+        if (prev >= 95) return prev;
+        return prev + 1.5;
+      });
+    }, 50);
     try {
       const r = await fetch(recordedVideoUrl);
       const blob = await r.blob();
+      if (downloadTimerRef.current) {
+        clearInterval(downloadTimerRef.current);
+        downloadTimerRef.current = null;
+      }
+      setDownloadProgress(100);
+      const totalMs = Date.now() - downloadStartTimeRef.current;
+      setDownloadDuration(Math.round(totalMs / 100) / 10);
       const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
       const suggestedName = `tv_recording_${Date.now()}.${ext}`;
       // Modern browsers / Electron with File System Access API: let user pick location
@@ -561,16 +590,32 @@ function Index() {
           const writable = await handle.createWritable();
           await writable.write(blob);
           await writable.close();
+          setDownloadResult("success");
+          setDownloadMessage(lang === "ar" ? "تم الحفظ في المكان المختار" : "Saved to chosen location");
           addLog(lang === "ar" ? "💾 تم حفظ الفيديو في المكان المختار" : "💾 Video saved to chosen location");
           return;
         } catch (err) {
           // User cancelled — bail without fallback
-          if ((err as DOMException)?.name === "AbortError") return;
+          if ((err as DOMException)?.name === "AbortError") {
+            setDownloadResult("idle");
+            setDownloadProgress(0);
+            return;
+          }
+          throw err;
         }
       }
       // Fallback: regular download
       saveAs(blob, suggestedName);
+      setDownloadResult("success");
+      setDownloadMessage(lang === "ar" ? "تم التنزيل" : "Downloaded");
+      addLog(lang === "ar" ? "💾 تم تنزيل الفيديو" : "💾 Video downloaded");
     } catch (e) {
+      if (downloadTimerRef.current) {
+        clearInterval(downloadTimerRef.current);
+        downloadTimerRef.current = null;
+      }
+      setDownloadResult("error");
+      setDownloadMessage(`❌ ${(e as Error).message}`);
       addLog(`❌ ${(e as Error).message}`);
     }
   };
@@ -1337,7 +1382,7 @@ function Index() {
                 )}
                 <button
                   onClick={downloadVideoToChosenLocation}
-                  disabled={!recordedVideoUrl}
+                  disabled={!recordedVideoUrl || downloadResult === "downloading"}
                   className="w-full text-center text-sm font-semibold px-3 py-2.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:cursor-not-allowed transition"
                 >
                   📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
@@ -1350,6 +1395,34 @@ function Index() {
                   >
                     ⬇️ {lang === "ar" ? "تحميل سريع" : "Quick download"}
                   </a>
+                )}
+
+                {/* Download progress & result */}
+                {downloadResult !== "idle" && (
+                  <div className="space-y-1 pt-1">
+                    <Progress value={downloadProgress} className="h-2" />
+                    <div className="flex justify-between items-center px-1">
+                      <span className="text-[10px] font-mono">
+                        {downloadResult === "downloading" ? (
+                          <span className="flex items-center gap-1 text-blue-400 animate-pulse">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
+                            {lang === "ar" ? "جاري التخزين..." : "Saving..."}
+                          </span>
+                        ) : downloadResult === "success" ? (
+                          <span className="flex items-center gap-1 text-emerald-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                            ✅ {downloadMessage}
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-red-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+                            {downloadMessage}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-mono">{downloadDuration.toFixed(1)}s</span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

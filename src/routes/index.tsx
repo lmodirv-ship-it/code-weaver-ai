@@ -12,6 +12,7 @@ import {
   type Project,
 } from "@/lib/projects-store";
 import { analyzeWebsite } from "@/lib/analyze.functions";
+import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/")({
   head: () => ({

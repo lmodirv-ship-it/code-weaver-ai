@@ -286,6 +286,14 @@ function Index() {
   const [recordingProgress, setRecordingProgress] = useState(0);
   const recordingProgressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Video download tracking
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadDuration, setDownloadDuration] = useState(0);
+  const [downloadResult, setDownloadResult] = useState<"idle" | "downloading" | "success" | "error">("idle");
+  const [downloadMessage, setDownloadMessage] = useState("");
+  const downloadTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const downloadStartTimeRef = useRef<number>(0);
+
   const pickRecorderMime = () => {
     const candidates = [
       "video/mp4;codecs=h264,aac",

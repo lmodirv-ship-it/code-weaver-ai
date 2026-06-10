@@ -488,6 +488,92 @@ function Index() {
     }
   };
 
+  const handleBulkAnalyze = async () => {
+    const urls = bulkUrls
+      .split(/[\n,;\s]+/)
+      .map((u) => u.trim())
+      .filter((u) => /^https?:\/\//i.test(u));
+    if (urls.length === 0) {
+      setAnalyzeError(lang === "ar" ? "أضف روابط صحيحة (تبدأ بـ http)" : "Add valid URLs (http/https)");
+      return;
+    }
+    setAnalyzeError("");
+    setBulkResults([]);
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: urls.length });
+    addLog(lang === "ar" ? `🚀 تحليل دفعة من ${urls.length} موقع` : `🚀 Analyzing ${urls.length} sites`);
+    const results: Array<{ url: string; description: string; pageCount: number; error?: string }> = [];
+    for (let i = 0; i < urls.length; i++) {
+      const u = urls[i];
+      setAnalyzedSiteUrl(u);
+      setAnalyzedScreenshot(`https://image.thum.io/get/width/1280/crop/900/noanimate/${u}`);
+      addLog(`🔎 ${i + 1}/${urls.length} — ${u}`);
+      try {
+        const res = await runAnalyze({ data: { url: u, imageDataUrl: "", lang } });
+        results.push({ url: u, description: res.description || "", pageCount: res.pageCount ?? 0 });
+      } catch (e) {
+        results.push({ url: u, description: "", pageCount: 0, error: (e as Error).message });
+      }
+      setBulkResults([...results]);
+      setBulkProgress({ done: i + 1, total: urls.length });
+    }
+    setBulkRunning(false);
+    addLog(lang === "ar" ? "✅ انتهى تحليل القائمة" : "✅ Bulk analysis done");
+  };
+
+  const handleDownloadBulkReport = () => {
+    if (bulkResults.length === 0) return;
+    const lines: string[] = [];
+    lines.push(lang === "ar" ? "# تقرير تحليل المواقع\n" : "# Websites Analysis Report\n");
+    for (const r of bulkResults) {
+      lines.push(`\n---\n\n## ${r.url}`);
+      lines.push(`\n${lang === "ar" ? "عدد الصفحات" : "Pages"}: ${r.pageCount}\n`);
+      if (r.error) lines.push(`\n**Error:** ${r.error}\n`);
+      else lines.push(`\n${r.description}\n`);
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+    saveAs(blob, `websites_report_${Date.now()}.md`);
+  };
+
+  const downloadVideoToChosenLocation = async () => {
+    if (!recordedVideoUrl) return;
+    try {
+      const r = await fetch(recordedVideoUrl);
+      const blob = await r.blob();
+      const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
+      const suggestedName = `tv_recording_${Date.now()}.${ext}`;
+      // Modern browsers / Electron with File System Access API: let user pick location
+      const w = window as unknown as {
+        showSaveFilePicker?: (opts: {
+          suggestedName?: string;
+          types?: Array<{ description: string; accept: Record<string, string[]> }>;
+        }) => Promise<{ createWritable: () => Promise<{ write: (b: Blob) => Promise<void>; close: () => Promise<void> }> }>;
+      };
+      if (typeof w.showSaveFilePicker === "function") {
+        try {
+          const handle = await w.showSaveFilePicker({
+            suggestedName,
+            types: [{
+              description: ext === "mp4" ? "MP4 Video" : "WebM Video",
+              accept: { [`video/${ext}`]: [`.${ext}`] },
+            }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          addLog(lang === "ar" ? "💾 تم حفظ الفيديو في المكان المختار" : "💾 Video saved to chosen location");
+          return;
+        } catch (err) {
+          // User cancelled — bail without fallback
+          if ((err as DOMException)?.name === "AbortError") return;
+        }
+      }
+      // Fallback: regular download
+      saveAs(blob, suggestedName);
+    } catch (e) {
+      addLog(`❌ ${(e as Error).message}`);
+    }
+
   const handleSave = () => {
     const name = projectName.trim() || description.slice(0, 40) || "مشروع";
     const p: Project = {

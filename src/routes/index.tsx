@@ -196,7 +196,7 @@ function Index() {
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-zinc-300 mb-1">
                   🎨 القالب
                 </label>
                 <select
@@ -210,14 +210,14 @@ function Index() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-zinc-300 mb-1">
                   💾 اسم المشروع
                 </label>
                 <input
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   placeholder="my-site"
-                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100"
+                  className="w-full text-sm rounded-lg border border-zinc-700 px-3 py-2 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ function Index() {
               <button
                 onClick={handleSave}
                 disabled={!html}
-                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-50"
+                className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 hover:bg-amber-600 disabled:opacity-60 disabled:text-zinc-300"
               >
                 💾 حفظ
               </button>

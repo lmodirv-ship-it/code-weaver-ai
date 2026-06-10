@@ -168,5 +168,7 @@ export const analyzeWebsite = createServerFn({ method: "POST" })
     return {
       description: typeof content === "string" ? content : JSON.stringify(content),
       screenshotUrl,
+      pages,
+      pageCount: pages.length,
     };
   });

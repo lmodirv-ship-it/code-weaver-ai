@@ -244,7 +244,7 @@ function Index() {
               💼 المشاريع المحفوظة ({projects.length})
             </h3>
             {projects.length === 0 ? (
-              <p className="text-xs text-zinc-500 py-4 text-center">
+              <p className="text-xs text-zinc-400 py-4 text-center">
                 لا توجد مشاريع بعد. ولّد موقعاً واضغط حفظ.
               </p>
             ) : (

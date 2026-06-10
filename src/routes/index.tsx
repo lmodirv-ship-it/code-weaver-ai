@@ -158,7 +158,7 @@ function Index() {
             <button
               onClick={() => handleExportZip()}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg bg-white text-black font-semibold hover:bg-zinc-200 disabled:opacity-60 disabled:text-zinc-500"
             >
               تصدير ZIP
             </button>

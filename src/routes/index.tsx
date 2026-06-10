@@ -138,6 +138,143 @@ function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── TV screen recording (getDisplayMedia + cropped Canvas + MediaRecorder) ──
+  const tvScreenRef = useRef<HTMLDivElement>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const recordingCleanupRef = useRef<(() => void) | null>(null);
+
+  const pickRecorderMime = () => {
+    const candidates = [
+      "video/mp4;codecs=h264,aac",
+      "video/mp4;codecs=avc1",
+      "video/mp4",
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8",
+      "video/webm",
+    ];
+    for (const t of candidates) {
+      if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t)) return t;
+    }
+    return "";
+  };
+
+  const startRecording = async () => {
+    if (isRecording) return;
+    if (!navigator.mediaDevices?.getDisplayMedia) {
+      alert(lang === "ar" ? "متصفحك لا يدعم تسجيل الشاشة" : "Your browser doesn't support screen capture");
+      return;
+    }
+    const tvEl = tvScreenRef.current;
+    if (!tvEl) return;
+    try {
+      const displayStream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: 30 } as MediaTrackConstraints,
+        audio: false,
+      });
+
+      const videoEl = document.createElement("video");
+      videoEl.muted = true;
+      (videoEl as HTMLVideoElement).playsInline = true;
+      videoEl.srcObject = displayStream;
+      await new Promise<void>((resolve) => {
+        videoEl.onloadedmetadata = () => resolve();
+      });
+      await videoEl.play();
+
+      const rect = tvEl.getBoundingClientRect();
+      const scaleX = videoEl.videoWidth / window.innerWidth;
+      const scaleY = videoEl.videoHeight / window.innerHeight;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(2, Math.round(rect.width * (window.devicePixelRatio || 1)));
+      canvas.height = Math.max(2, Math.round(rect.height * (window.devicePixelRatio || 1)));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas 2D not available");
+
+      let stopped = false;
+      const draw = () => {
+        if (stopped) return;
+        try {
+          ctx.drawImage(
+            videoEl,
+            rect.left * scaleX,
+            rect.top * scaleY,
+            rect.width * scaleX,
+            rect.height * scaleY,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+        } catch {
+          /* drawing before frame is ready */
+        }
+        requestAnimationFrame(draw);
+      };
+      draw();
+
+      const canvasStream = (canvas as HTMLCanvasElement).captureStream(30);
+      const mimeType = pickRecorderMime();
+      const recorder = new MediaRecorder(canvasStream, mimeType ? { mimeType } : undefined);
+      recorderRef.current = recorder;
+      recordedChunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) recordedChunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const isMp4 = (recorder.mimeType || mimeType).includes("mp4");
+        const blob = new Blob(recordedChunksRef.current, {
+          type: recorder.mimeType || mimeType || "video/webm",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `tv_recording_${Date.now()}.${isMp4 ? "mp4" : "webm"}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        addLog(lang === "ar" ? `💾 تم حفظ التسجيل (${isMp4 ? "MP4" : "WebM"})` : `💾 Recording saved (${isMp4 ? "MP4" : "WebM"})`);
+      };
+
+      recordingCleanupRef.current = () => {
+        stopped = true;
+        try { displayStream.getTracks().forEach((t) => t.stop()); } catch { /* ignore */ }
+        try { canvasStream.getTracks().forEach((t) => t.stop()); } catch { /* ignore */ }
+        videoEl.srcObject = null;
+        videoEl.remove();
+      };
+
+      displayStream.getVideoTracks()[0].addEventListener("ended", () => {
+        stopRecording();
+      });
+
+      recorder.start(1000);
+      setIsRecording(true);
+      addLog(lang === "ar" ? "🎥 بدأ تسجيل شاشة التلفاز" : "🎥 TV recording started");
+    } catch (err) {
+      console.error(err);
+      addLog(`❌ ${(err as Error).message}`);
+    }
+  };
+
+  const stopRecording = () => {
+    const rec = recorderRef.current;
+    if (rec && rec.state !== "inactive") {
+      try { rec.stop(); } catch { /* ignore */ }
+    }
+    if (recordingCleanupRef.current) {
+      recordingCleanupRef.current();
+      recordingCleanupRef.current = null;
+    }
+    setIsRecording(false);
+  };
+
+
+
   useEffect(() => {
     setProjects(listProjects());
     handleGenerate();

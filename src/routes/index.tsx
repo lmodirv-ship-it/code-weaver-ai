@@ -166,25 +166,18 @@ function Index() {
         </div>
       </header>
 
-      <main dir="rtl" className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 pb-32 flex flex-col lg:flex-row gap-6">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 pb-32 flex flex-col gap-6">
         {/* Description panel — below the TV */}
-        <aside className="space-y-4 order-2 lg:w-[360px] shrink-0">
+        <aside className="space-y-4 order-2">
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-semibold text-zinc-100 shrink-0">
-                📝 صف موقعك (عربي أو إنجليزي)
-              </label>
-              <input
-                type="text"
-                placeholder="اكتب هنا..."
-                className="flex-1 min-w-0 text-sm rounded-lg border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2 placeholder:text-zinc-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none"
-              />
-            </div>
+            <label className="block text-sm font-semibold text-zinc-100 mb-2">
+              📝 صف موقعك (عربي أو إنجليزي)
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={3}
+              rows={6}
               className="w-full text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-zinc-100 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 outline-none resize-none placeholder:text-zinc-500"
               placeholder="مثال: موقع لمطعم باللون الأخضر مع شريط علوي ونموذج تواصل..."
             />
@@ -296,7 +289,7 @@ function Index() {
         </aside>
 
         {/* TV — full width, above the description */}
-        <section className="order-1 flex flex-col w-full lg:flex-1">
+        <section className="order-1 flex flex-col w-full">
 
 
           {/* Outer box — deepest frame with rim light */}
@@ -380,7 +373,7 @@ function Index() {
                 </div>
 
                 {/* Screen */}
-                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[28vh]">
+                <div className="relative rounded-lg overflow-hidden bg-black ring-1 ring-zinc-800 shadow-inner aspect-video max-h-[45vh]">
                   <div
                     className="pointer-events-none absolute inset-0 z-10 opacity-[0.06] mix-blend-overlay"
                     style={{

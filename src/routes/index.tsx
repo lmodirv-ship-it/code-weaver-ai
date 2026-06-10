@@ -261,19 +261,17 @@ function Index() {
         if (e.data && e.data.size > 0) recordedChunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        const isMp4 = (recorder.mimeType || mimeType).includes("mp4");
-        const blob = new Blob(recordedChunksRef.current, {
-          type: recorder.mimeType || mimeType || "video/webm",
-        });
+        const finalMime = recorder.mimeType || mimeType || "video/webm";
+        const blob = new Blob(recordedChunksRef.current, { type: finalMime });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `tv_recording_${Date.now()}.${isMp4 ? "mp4" : "webm"}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 60_000);
-        addLog(lang === "ar" ? `💾 تم حفظ التسجيل (${isMp4 ? "MP4" : "WebM"})` : `💾 Recording saved (${isMp4 ? "MP4" : "WebM"})`);
+        setRecordedVideoUrl((prev) => {
+          if (prev) {
+            try { URL.revokeObjectURL(prev); } catch { /* ignore */ }
+          }
+          return url;
+        });
+        setRecordedVideoMime(finalMime);
+        addLog(lang === "ar" ? "💾 جاهز للمعاينة والتحميل" : "💾 Ready to preview and download");
       };
 
       recordingCleanupRef.current = () => {

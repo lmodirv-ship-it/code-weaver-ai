@@ -289,7 +289,8 @@ function Index() {
         </aside>
 
         {/* TV — full width, above the description */}
-        <section className="order-first flex flex-col w-full">
+        <section className="order-1 flex flex-col w-full">
+
 
           {/* Outer box — deepest frame with rim light */}
           <div

@@ -69,6 +69,12 @@ function Index() {
   const [detectedPages, setDetectedPages] = useState<string[]>([]);
   const runAnalyze = useServerFn(analyzeWebsite);
 
+  // Batch analysis of a list of websites
+  const [bulkUrls, setBulkUrls] = useState<string>("");
+  const [bulkResults, setBulkResults] = useState<Array<{ url: string; description: string; pageCount: number; error?: string }>>([]);
+  const [bulkRunning, setBulkRunning] = useState<boolean>(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+
   // Smart assistant (mascot + voice + log)
   const [logEntries, setLogEntries] = useState<string[]>([]);
   const [mascotActive, setMascotActive] = useState<boolean>(false);

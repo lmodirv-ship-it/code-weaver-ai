@@ -8,6 +8,8 @@ import {
   teach,
   applyFeedback,
   record,
+  clearHistory,
+  detectLang,
   type ModelState,
 } from "@/lib/learning-model";
 

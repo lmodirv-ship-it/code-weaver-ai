@@ -39,8 +39,17 @@ function tokenize(s: string): string[] {
   return s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(Boolean);
 }
 
-function isArabic(s: string): boolean {
+export function isArabic(s: string): boolean {
   return /[\u0600-\u06FF]/.test(s);
+}
+
+export function detectLang(s: string): "ar" | "en" | "mixed" {
+  const hasAr = /[\u0600-\u06FF]/.test(s);
+  const hasEn = /[a-zA-Z]/.test(s);
+  if (hasAr && hasEn) return "mixed";
+  if (hasAr) return "ar";
+  if (hasEn) return "en";
+  return "en";
 }
 
 function similarity(a: string, b: string): number {

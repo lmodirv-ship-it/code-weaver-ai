@@ -406,6 +406,11 @@ function Index() {
       recordingCleanupRef.current();
       recordingCleanupRef.current = null;
     }
+    if (recordingProgressTimerRef.current) {
+      clearInterval(recordingProgressTimerRef.current);
+      recordingProgressTimerRef.current = null;
+    }
+    setRecordingProgress(100);
     setIsRecording(false);
   };
 

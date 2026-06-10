@@ -273,6 +273,8 @@ function Index() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const recordingCleanupRef = useRef<(() => void) | null>(null);
+  const [recordingProgress, setRecordingProgress] = useState(0);
+  const recordingProgressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const pickRecorderMime = () => {
     const candidates = [

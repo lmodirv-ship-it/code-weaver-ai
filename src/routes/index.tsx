@@ -135,6 +135,12 @@ function Index() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              to="/ai-lab"
+              className="text-sm px-3 py-2 rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-white shadow-md hover:opacity-95"
+            >
+              🧠 مختبر الذكاء
+            </Link>
             <button
               onClick={handleOpenInNewTab}
               disabled={!html}

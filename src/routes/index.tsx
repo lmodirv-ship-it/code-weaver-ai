@@ -278,7 +278,7 @@ function Index() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 truncate">
+                    <p className="text-[11px] text-zinc-400 mt-0.5 truncate">
                       {p.template} · {new Date(p.createdAt).toLocaleString()}
                     </p>
                   </li>
@@ -353,7 +353,7 @@ function Index() {
                     <span className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_6px_rgba(220,38,38,0.6)]" />
                     <span className="w-2 h-2 rounded-full bg-yellow-500" />
                     <span className="w-2 h-2 rounded-full bg-green-600" />
-                    <span className="ml-1.5 text-[10px] text-zinc-500 font-mono">LIVE · شاشة المعاينة</span>
+                    <span className="ml-1.5 text-[10px] text-zinc-400 font-mono">LIVE · شاشة المعاينة</span>
                   </div>
                   <div className="flex gap-1 bg-zinc-950 rounded-md p-0.5">
                     {(["preview", "code"] as const).map((t) => (
@@ -363,7 +363,7 @@ function Index() {
                         className={`text-[11px] px-2 py-0.5 rounded font-medium transition ${
                           tab === t
                             ? "bg-zinc-200 text-zinc-900"
-                            : "text-zinc-500 hover:text-zinc-200"
+                            : "text-zinc-400 hover:text-zinc-200"
                         }`}
                       >
                         {t === "preview" ? "🌐 معاينة" : "📄 الكود"}
@@ -384,7 +384,7 @@ function Index() {
                   <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
                   {!html ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                       <div className="text-4xl mb-2 animate-pulse">📺</div>
                       <p className="text-xs">اضغط « 🚀 توليد الموقع » لعرض النتيجة هنا</p>
                     </div>
@@ -418,7 +418,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="text-center text-xs text-zinc-500 py-6">
+      <footer className="text-center text-xs text-zinc-400 py-6">
         مولّد مواقع ذكي — يدعم العربية والإنجليزية · بدون خادم، يعمل بالكامل في متصفحك.
       </footer>
     </div>

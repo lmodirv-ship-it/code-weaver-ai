@@ -546,9 +546,29 @@ function Index() {
 
   const downloadVideoToChosenLocation = async () => {
     if (!recordedVideoUrl) return;
+    setDownloadResult("downloading");
+    setDownloadProgress(0);
+    setDownloadDuration(0);
+    setDownloadMessage("");
+    downloadStartTimeRef.current = Date.now();
+    if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
+    downloadTimerRef.current = setInterval(() => {
+      setDownloadDuration(Math.round((Date.now() - downloadStartTimeRef.current) / 100) / 10);
+      setDownloadProgress((prev) => {
+        if (prev >= 95) return prev;
+        return prev + 1.5;
+      });
+    }, 50);
     try {
       const r = await fetch(recordedVideoUrl);
       const blob = await r.blob();
+      if (downloadTimerRef.current) {
+        clearInterval(downloadTimerRef.current);
+        downloadTimerRef.current = null;
+      }
+      setDownloadProgress(100);
+      const totalMs = Date.now() - downloadStartTimeRef.current;
+      setDownloadDuration(Math.round(totalMs / 100) / 10);
       const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
       const suggestedName = `tv_recording_${Date.now()}.${ext}`;
       // Modern browsers / Electron with File System Access API: let user pick location
@@ -570,16 +590,32 @@ function Index() {
           const writable = await handle.createWritable();
           await writable.write(blob);
           await writable.close();
+          setDownloadResult("success");
+          setDownloadMessage(lang === "ar" ? "تم الحفظ في المكان المختار" : "Saved to chosen location");
           addLog(lang === "ar" ? "💾 تم حفظ الفيديو في المكان المختار" : "💾 Video saved to chosen location");
           return;
         } catch (err) {
           // User cancelled — bail without fallback
-          if ((err as DOMException)?.name === "AbortError") return;
+          if ((err as DOMException)?.name === "AbortError") {
+            setDownloadResult("idle");
+            setDownloadProgress(0);
+            return;
+          }
+          throw err;
         }
       }
       // Fallback: regular download
       saveAs(blob, suggestedName);
+      setDownloadResult("success");
+      setDownloadMessage(lang === "ar" ? "تم التنزيل" : "Downloaded");
+      addLog(lang === "ar" ? "💾 تم تنزيل الفيديو" : "💾 Video downloaded");
     } catch (e) {
+      if (downloadTimerRef.current) {
+        clearInterval(downloadTimerRef.current);
+        downloadTimerRef.current = null;
+      }
+      setDownloadResult("error");
+      setDownloadMessage(`❌ ${(e as Error).message}`);
       addLog(`❌ ${(e as Error).message}`);
     }
   };

@@ -151,7 +151,7 @@ function Index() {
             <button
               onClick={handleDownloadHtml}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg border border-zinc-600 bg-zinc-900/60 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:text-zinc-400"
             >
               HTML
             </button>

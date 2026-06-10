@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import JSZip from "jszip";
-import { saveAs } from "file-saver";
+import FileSaver from "file-saver";
+const { saveAs } = FileSaver;
 import { generateWebsite, type TemplateName } from "@/lib/website-generator";
 import {
   listProjects,

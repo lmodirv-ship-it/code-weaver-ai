@@ -573,6 +573,9 @@ function Index() {
     } catch (e) {
       addLog(`❌ ${(e as Error).message}`);
     }
+  };
+
+
 
   const handleSave = () => {
     const name = projectName.trim() || description.slice(0, 40) || "مشروع";

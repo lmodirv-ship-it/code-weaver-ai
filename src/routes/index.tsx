@@ -69,6 +69,12 @@ function Index() {
   const [detectedPages, setDetectedPages] = useState<string[]>([]);
   const runAnalyze = useServerFn(analyzeWebsite);
 
+  // Batch analysis of a list of websites
+  const [bulkUrls, setBulkUrls] = useState<string>("");
+  const [bulkResults, setBulkResults] = useState<Array<{ url: string; description: string; pageCount: number; error?: string }>>([]);
+  const [bulkRunning, setBulkRunning] = useState<boolean>(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+
   // Smart assistant (mascot + voice + log)
   const [logEntries, setLogEntries] = useState<string[]>([]);
   const [mascotActive, setMascotActive] = useState<boolean>(false);
@@ -482,6 +488,95 @@ function Index() {
     }
   };
 
+  const handleBulkAnalyze = async () => {
+    const urls = bulkUrls
+      .split(/[\n,;\s]+/)
+      .map((u) => u.trim())
+      .filter((u) => /^https?:\/\//i.test(u));
+    if (urls.length === 0) {
+      setAnalyzeError(lang === "ar" ? "أضف روابط صحيحة (تبدأ بـ http)" : "Add valid URLs (http/https)");
+      return;
+    }
+    setAnalyzeError("");
+    setBulkResults([]);
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: urls.length });
+    addLog(lang === "ar" ? `🚀 تحليل دفعة من ${urls.length} موقع` : `🚀 Analyzing ${urls.length} sites`);
+    const results: Array<{ url: string; description: string; pageCount: number; error?: string }> = [];
+    for (let i = 0; i < urls.length; i++) {
+      const u = urls[i];
+      setAnalyzedSiteUrl(u);
+      setAnalyzedScreenshot(`https://image.thum.io/get/width/1280/crop/900/noanimate/${u}`);
+      addLog(`🔎 ${i + 1}/${urls.length} — ${u}`);
+      try {
+        const res = await runAnalyze({ data: { url: u, imageDataUrl: "", lang } });
+        results.push({ url: u, description: res.description || "", pageCount: res.pageCount ?? 0 });
+      } catch (e) {
+        results.push({ url: u, description: "", pageCount: 0, error: (e as Error).message });
+      }
+      setBulkResults([...results]);
+      setBulkProgress({ done: i + 1, total: urls.length });
+    }
+    setBulkRunning(false);
+    addLog(lang === "ar" ? "✅ انتهى تحليل القائمة" : "✅ Bulk analysis done");
+  };
+
+  const handleDownloadBulkReport = () => {
+    if (bulkResults.length === 0) return;
+    const lines: string[] = [];
+    lines.push(lang === "ar" ? "# تقرير تحليل المواقع\n" : "# Websites Analysis Report\n");
+    for (const r of bulkResults) {
+      lines.push(`\n---\n\n## ${r.url}`);
+      lines.push(`\n${lang === "ar" ? "عدد الصفحات" : "Pages"}: ${r.pageCount}\n`);
+      if (r.error) lines.push(`\n**Error:** ${r.error}\n`);
+      else lines.push(`\n${r.description}\n`);
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+    saveAs(blob, `websites_report_${Date.now()}.md`);
+  };
+
+  const downloadVideoToChosenLocation = async () => {
+    if (!recordedVideoUrl) return;
+    try {
+      const r = await fetch(recordedVideoUrl);
+      const blob = await r.blob();
+      const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
+      const suggestedName = `tv_recording_${Date.now()}.${ext}`;
+      // Modern browsers / Electron with File System Access API: let user pick location
+      const w = window as unknown as {
+        showSaveFilePicker?: (opts: {
+          suggestedName?: string;
+          types?: Array<{ description: string; accept: Record<string, string[]> }>;
+        }) => Promise<{ createWritable: () => Promise<{ write: (b: Blob) => Promise<void>; close: () => Promise<void> }> }>;
+      };
+      if (typeof w.showSaveFilePicker === "function") {
+        try {
+          const handle = await w.showSaveFilePicker({
+            suggestedName,
+            types: [{
+              description: ext === "mp4" ? "MP4 Video" : "WebM Video",
+              accept: { [`video/${ext}`]: [`.${ext}`] },
+            }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          addLog(lang === "ar" ? "💾 تم حفظ الفيديو في المكان المختار" : "💾 Video saved to chosen location");
+          return;
+        } catch (err) {
+          // User cancelled — bail without fallback
+          if ((err as DOMException)?.name === "AbortError") return;
+        }
+      }
+      // Fallback: regular download
+      saveAs(blob, suggestedName);
+    } catch (e) {
+      addLog(`❌ ${(e as Error).message}`);
+    }
+  };
+
+
+
   const handleSave = () => {
     const name = projectName.trim() || description.slice(0, 40) || "مشروع";
     const p: Project = {
@@ -773,6 +868,63 @@ function Index() {
                     {analysis}
                   </div>
                 )}
+
+                {/* Bulk URL list analysis */}
+                <div className="mt-5 pt-4 border-t border-zinc-800">
+                  <label className="block text-sm font-semibold text-zinc-100 mb-2">
+                    📋 {lang === "ar" ? "أو حلّل قائمة مواقع دفعة واحدة" : "Or analyze a list of websites"}
+                  </label>
+                  <textarea
+                    value={bulkUrls}
+                    onChange={(e) => setBulkUrls(e.target.value)}
+                    placeholder={"https://site1.com\nhttps://site2.com\nhttps://site3.com"}
+                    dir="ltr"
+                    rows={4}
+                    className="w-full text-xs rounded-lg border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2 focus:border-blue-500 outline-none placeholder:text-zinc-500 font-mono"
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleBulkAnalyze}
+                      disabled={bulkRunning}
+                      className="flex-1 text-xs font-semibold px-3 py-2 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 text-white hover:opacity-95 disabled:opacity-60"
+                    >
+                      {bulkRunning
+                        ? `⏳ ${bulkProgress.done}/${bulkProgress.total}`
+                        : (lang === "ar" ? "🚀 تحليل القائمة" : "🚀 Analyze list")}
+                    </button>
+                    {bulkResults.length > 0 && (
+                      <button
+                        onClick={handleDownloadBulkReport}
+                        className="text-xs font-semibold px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                      >
+                        ⬇️ {lang === "ar" ? "تحميل التقرير" : "Download report"}
+                      </button>
+                    )}
+                  </div>
+
+                  {bulkResults.length > 0 && (
+                    <ul className="mt-3 space-y-2 max-h-72 overflow-auto">
+                      {bulkResults.map((r, i) => (
+                        <li key={i} className="bg-zinc-950 border border-zinc-800 rounded-lg p-2">
+                          <div dir="ltr" className="text-[11px] font-mono text-blue-300 truncate">{r.url}</div>
+                          {r.error ? (
+                            <p className="text-[11px] text-red-400 mt-1">{r.error}</p>
+                          ) : (
+                            <>
+                              <p className="text-[11px] text-emerald-300 mt-0.5">
+                                📄 {lang === "ar" ? "صفحات" : "Pages"}: {r.pageCount}
+                              </p>
+                              <p className="text-[11px] text-zinc-300 mt-1 line-clamp-3 whitespace-pre-wrap">
+                                {r.description.slice(0, 240)}{r.description.length > 240 ? "…" : ""}
+                              </p>
+                            </>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
               </>
             )}
           </div>
@@ -1177,19 +1329,10 @@ function Index() {
                     className="w-full rounded-lg bg-black aspect-video"
                   />
                   <button
-                    onClick={async () => {
-                      try {
-                        const r = await fetch(recordedVideoUrl);
-                        const blob = await r.blob();
-                        const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
-                        saveAs(blob, `tv_recording_${Date.now()}.${ext}`);
-                      } catch (e) {
-                        addLog(`❌ ${(e as Error).message}`);
-                      }
-                    }}
+                    onClick={downloadVideoToChosenLocation}
                     className="w-full text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
                   >
-                    📥 {lang === "ar" ? "تحميل الفيديو" : "Download video"}
+                    📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
                   </button>
                 </div>
               ) : (

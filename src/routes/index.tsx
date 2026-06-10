@@ -868,6 +868,63 @@ function Index() {
                     {analysis}
                   </div>
                 )}
+
+                {/* Bulk URL list analysis */}
+                <div className="mt-5 pt-4 border-t border-zinc-800">
+                  <label className="block text-sm font-semibold text-zinc-100 mb-2">
+                    📋 {lang === "ar" ? "أو حلّل قائمة مواقع دفعة واحدة" : "Or analyze a list of websites"}
+                  </label>
+                  <textarea
+                    value={bulkUrls}
+                    onChange={(e) => setBulkUrls(e.target.value)}
+                    placeholder={"https://site1.com\nhttps://site2.com\nhttps://site3.com"}
+                    dir="ltr"
+                    rows={4}
+                    className="w-full text-xs rounded-lg border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2 focus:border-blue-500 outline-none placeholder:text-zinc-500 font-mono"
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleBulkAnalyze}
+                      disabled={bulkRunning}
+                      className="flex-1 text-xs font-semibold px-3 py-2 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 text-white hover:opacity-95 disabled:opacity-60"
+                    >
+                      {bulkRunning
+                        ? `⏳ ${bulkProgress.done}/${bulkProgress.total}`
+                        : (lang === "ar" ? "🚀 تحليل القائمة" : "🚀 Analyze list")}
+                    </button>
+                    {bulkResults.length > 0 && (
+                      <button
+                        onClick={handleDownloadBulkReport}
+                        className="text-xs font-semibold px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                      >
+                        ⬇️ {lang === "ar" ? "تحميل التقرير" : "Download report"}
+                      </button>
+                    )}
+                  </div>
+
+                  {bulkResults.length > 0 && (
+                    <ul className="mt-3 space-y-2 max-h-72 overflow-auto">
+                      {bulkResults.map((r, i) => (
+                        <li key={i} className="bg-zinc-950 border border-zinc-800 rounded-lg p-2">
+                          <div dir="ltr" className="text-[11px] font-mono text-blue-300 truncate">{r.url}</div>
+                          {r.error ? (
+                            <p className="text-[11px] text-red-400 mt-1">{r.error}</p>
+                          ) : (
+                            <>
+                              <p className="text-[11px] text-emerald-300 mt-0.5">
+                                📄 {lang === "ar" ? "صفحات" : "Pages"}: {r.pageCount}
+                              </p>
+                              <p className="text-[11px] text-zinc-300 mt-1 line-clamp-3 whitespace-pre-wrap">
+                                {r.description.slice(0, 240)}{r.description.length > 240 ? "…" : ""}
+                              </p>
+                            </>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
               </>
             )}
           </div>

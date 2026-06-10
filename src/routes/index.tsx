@@ -166,8 +166,8 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[42%_58%] gap-6">
-        {/* Left panel */}
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+        {/* Description panel — below the TV */}
         <aside className="space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <label className="block text-sm font-semibold text-slate-900 mb-2">

@@ -1321,27 +1321,37 @@ function Index() {
               <h3 className="text-sm font-semibold text-zinc-100 mb-3">
                 📹 {lang === "ar" ? "الفيديو المسجّل" : "Recorded video"}
               </h3>
-              {recordedVideoUrl ? (
-                <div className="space-y-2">
+              <div className="space-y-2">
+                {recordedVideoUrl ? (
                   <video
                     src={recordedVideoUrl}
                     controls
                     className="w-full rounded-lg bg-black aspect-video"
                   />
-                  <button
-                    onClick={downloadVideoToChosenLocation}
-                    className="w-full text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                ) : (
+                  <div className="w-full aspect-video rounded-lg bg-black/60 border border-dashed border-zinc-700 flex items-center justify-center text-xs text-zinc-500 text-center px-3">
+                    {lang === "ar"
+                      ? "اضغط « تسجيل الشاشة » ثم « إنهاء وحفظ » لتظهر المعاينة هنا."
+                      : "Click Record then Stop & save to see the preview here."}
+                  </div>
+                )}
+                <button
+                  onClick={downloadVideoToChosenLocation}
+                  disabled={!recordedVideoUrl}
+                  className="w-full text-center text-sm font-semibold px-3 py-2.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:cursor-not-allowed transition"
+                >
+                  📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
+                </button>
+                {recordedVideoUrl && (
+                  <a
+                    href={recordedVideoUrl}
+                    download={`explainer_${Date.now()}.webm`}
+                    className="block w-full text-center text-xs px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
                   >
-                    📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
-                  </button>
-                </div>
-              ) : (
-                <p className="text-xs text-zinc-500">
-                  {lang === "ar"
-                    ? "اضغط « تسجيل الشاشة » ثم « إنهاء وحفظ » لتظهر المعاينة هنا."
-                    : "Click Record then Stop & save to see the preview here."}
-                </p>
-              )}
+                    ⬇️ {lang === "ar" ? "تحميل سريع" : "Quick download"}
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Explainer person */}

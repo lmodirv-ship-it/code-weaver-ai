@@ -66,6 +66,7 @@ function Index() {
   const [analyzeError, setAnalyzeError] = useState<string>("");
   const [analyzedSiteUrl, setAnalyzedSiteUrl] = useState<string>("");
   const [analyzedScreenshot, setAnalyzedScreenshot] = useState<string>("");
+  const [detectedPages, setDetectedPages] = useState<string[]>([]);
   const runAnalyze = useServerFn(analyzeWebsite);
 
   // Smart assistant (mascot + voice + log)

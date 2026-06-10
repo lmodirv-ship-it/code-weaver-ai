@@ -289,21 +289,36 @@ function Index() {
 
         {/* Right panel — TV inside box inside box */}
         <section className="flex flex-col">
-          {/* Outer box */}
+          {/* Outer box — deepest frame with rim light */}
           <div
-            className="relative rounded-2xl p-1 border border-zinc-950 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)]"
-            style={{ background: "#0a0a0a" }}
+            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_-1px_0_rgba(0,0,0,0.6)]"
+            style={{
+              background:
+                "radial-gradient(120% 90% at 50% 0%, #1c1c1c 0%, #0c0c0c 50%, #050505 100%)",
+            }}
           >
-            {/* Outer box corner bolts */}
-            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
-            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
-            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
-            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-inner" />
+            {/* Outer box corner bolts — metallic */}
+            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
+            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
+            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
+            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
 
-            {/* Middle box */}
-            <div className="rounded-xl p-1 bg-[#111] border border-zinc-900 shadow-inner">
-              {/* Inner box (TV body) */}
-              <div className="relative rounded-lg p-2 bg-[#000] border border-zinc-800 shadow-[0_10px_30px_-8px_rgba(0,0,0,0.9)]">
+            {/* Middle box — brushed metal */}
+            <div
+              className="rounded-xl p-1 border border-zinc-900/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_-1px_0_rgba(0,0,0,0.85),0_4px_10px_-4px_rgba(0,0,0,0.75)]"
+              style={{
+                background:
+                  "linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 50%, #141414 100%)",
+              }}
+            >
+              {/* Inner box (TV body) — glossy bezel */}
+              <div
+                className="relative rounded-lg p-2 border border-zinc-800/70 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.09),inset_0_-2px_4px_rgba(0,0,0,0.9)]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #0c0c0c 0%, #000 45%, #060606 100%)",
+                }}
+              >
                 {/* TV bezel top controls */}
                 <div className="flex items-center justify-between mb-2 px-1">
                   <div className="flex items-center gap-1.5">

@@ -166,7 +166,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[420px_1fr] gap-6">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[42%_58%] gap-6">
         {/* Left panel */}
         <aside className="space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">

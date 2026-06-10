@@ -291,57 +291,57 @@ function Index() {
         <section className="flex flex-col">
           {/* Outer box — deepest frame with rim light */}
           <div
-            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_1.5px_0_rgba(255,255,255,0.14),inset_0_-1.5px_0_rgba(0,0,0,0.85),inset_1.5px_0_0_rgba(255,255,255,0.05),inset_-1.5px_0_0_rgba(0,0,0,0.7)]"
+            className="relative rounded-2xl p-1 border border-black shadow-[0_25px_60px_-20px_rgba(0,0,0,0.95),inset_0_2px_0_rgba(255,255,255,0.18),inset_0_-2px_0_rgba(0,0,0,0.92),inset_2.5px_0_0_rgba(255,255,255,0.12),inset_-2.5px_0_0_rgba(0,0,0,0.85)]"
             style={{
               background:
-                "radial-gradient(120% 90% at 50% 0%, #1c1c1c 0%, #0c0c0c 50%, #050505 100%)",
+                "radial-gradient(120% 90% at 50% 0%, #181818 0%, #080808 50%, #020202 100%)",
             }}
           >
             {/* Subtle wavy highlight band along the top inner edge */}
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-x-1 top-0 h-[3px] rounded-t-2xl opacity-70"
+              className="pointer-events-none absolute inset-x-1 top-0 h-[4px] rounded-t-2xl opacity-80"
               style={{
                 background:
-                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.22) 80%, transparent 100%)",
+                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 20%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.28) 80%, transparent 100%)",
               }}
             />
             {/* Outer box corner bolts — metallic */}
-            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
-            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-800 shadow-[0_0_2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.4)]" />
+            <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
+            <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-700 shadow-[0_0_3px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.5)]" />
 
             {/* Middle box — brushed metal */}
             <div
-              className="relative rounded-xl p-1 border border-zinc-900/80 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.16),inset_0_-1.5px_0_rgba(0,0,0,0.9),inset_1px_0_0_rgba(255,255,255,0.04),inset_-1px_0_0_rgba(0,0,0,0.75),0_4px_10px_-4px_rgba(0,0,0,0.75)]"
+              className="relative rounded-xl p-1 border border-zinc-900/80 shadow-[inset_0_2px_0_rgba(255,255,255,0.22),inset_0_-2px_0_rgba(0,0,0,0.95),inset_2px_0_0_rgba(255,255,255,0.1),inset_-2px_0_0_rgba(0,0,0,0.85),0_4px_10px_-4px_rgba(0,0,0,0.75)]"
               style={{
                 background:
-                  "linear-gradient(180deg, #1f1f1f 0%, #0e0e0e 55%, #161616 100%)",
+                  "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 55%, #121212 100%)",
               }}
             >
               <span
                 aria-hidden
-                className="pointer-events-none absolute inset-x-2 top-0 h-px opacity-80"
+                className="pointer-events-none absolute inset-x-2 top-0 h-[2px] opacity-90"
                 style={{
                   background:
-                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.35) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.35) 70%, transparent)",
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.45) 70%, transparent)",
                 }}
               />
               {/* Inner box (TV body) — glossy bezel */}
               <div
-                className="relative rounded-lg p-2 border border-zinc-800/70 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.95),inset_0_1.5px_0_rgba(255,255,255,0.18),inset_0_-2px_4px_rgba(0,0,0,0.95),inset_1px_0_0_rgba(255,255,255,0.05),inset_-1px_0_0_rgba(0,0,0,0.8)]"
+                className="relative rounded-lg p-2 border border-zinc-800/70 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.95),inset_0_2px_0_rgba(255,255,255,0.24),inset_0_-2px_4px_rgba(0,0,0,0.98),inset_2px_0_0_rgba(255,255,255,0.1),inset_-2px_0_0_rgba(0,0,0,0.88)]"
                 style={{
                   background:
-                    "linear-gradient(180deg, #111 0%, #000 45%, #070707 100%)",
+                    "linear-gradient(180deg, #0c0c0c 0%, #000 45%, #040404 100%)",
                 }}
               >
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-1.5 top-0 h-px opacity-90"
+                  className="pointer-events-none absolute inset-x-1.5 top-0 h-[2px] opacity-95"
                   style={{
                     background:
-                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.4) 75%, transparent)",
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.5) 75%, transparent)",
                   }}
                 />
                 {/* TV bezel top controls */}

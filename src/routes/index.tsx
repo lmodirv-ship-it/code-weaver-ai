@@ -932,6 +932,27 @@ function Index() {
                   <span>CH-01 · AR/EN</span>
                   <span>{html ? `${(html.length / 1024).toFixed(1)} KB` : "—"}</span>
                 </div>
+
+                {/* Recording progress bar */}
+                {isRecording && (
+                  <div className="mt-2 w-full">
+                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden ring-1 ring-zinc-700">
+                      <div
+                        className="h-full bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-full transition-all duration-100 ease-linear"
+                        style={{ width: `${Math.max(1, Math.min(100, recordingProgress))}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center mt-1 px-1">
+                      <span className="flex items-center gap-1 text-[10px] text-red-400 font-mono animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+                        REC
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-mono">
+                        {Math.max(1, Math.min(100, Math.round(recordingProgress)))}%
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

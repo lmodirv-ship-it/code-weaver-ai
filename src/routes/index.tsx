@@ -418,7 +418,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="text-center text-xs text-slate-500 py-6">
+      <footer className="text-center text-xs text-zinc-500 py-6">
         مولّد مواقع ذكي — يدعم العربية والإنجليزية · بدون خادم، يعمل بالكامل في متصفحك.
       </footer>
     </div>

@@ -119,17 +119,17 @@ function Index() {
   return (
     <div className="min-h-screen" style={{ background: "radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 40%, #000000 100%)" }}>
       {/* Header */}
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-zinc-800 bg-black/70 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
               W
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-slate-900">
+              <h1 className="text-base sm:text-lg font-bold text-white">
                 مصمم المواقع الذكي
               </h1>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-zinc-400">
                 Smart Website Designer · AR / EN
               </p>
             </div>
@@ -144,21 +144,21 @@ function Index() {
             <button
               onClick={handleOpenInNewTab}
               disabled={!html}
-              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
             >
               فتح في نافذة
             </button>
             <button
               onClick={handleDownloadHtml}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
             >
               HTML
             </button>
             <button
               onClick={() => handleExportZip()}
               disabled={!html}
-              className="text-sm px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+              className="text-sm px-3 py-2 rounded-lg bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50"
             >
               تصدير ZIP
             </button>

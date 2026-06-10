@@ -144,7 +144,7 @@ function Index() {
             <button
               onClick={handleOpenInNewTab}
               disabled={!html}
-              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+              className="hidden sm:inline-flex text-sm px-3 py-2 rounded-lg border border-zinc-600 bg-zinc-900/60 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:text-zinc-400"
             >
               فتح في نافذة
             </button>

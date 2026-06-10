@@ -96,6 +96,84 @@ function Index() {
     setLogEntries((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev].slice(0, 20));
   };
 
+  // Sound effects via Web Audio API (no external files)
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const getAudioCtx = () => {
+    if (typeof window === "undefined") return null;
+    if (!audioCtxRef.current) {
+      const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!Ctor) return null;
+      audioCtxRef.current = new Ctor();
+    }
+    return audioCtxRef.current;
+  };
+  const tone = (
+    ctx: AudioContext,
+    freq: number,
+    start: number,
+    dur: number,
+    type: OscillatorType = "sine",
+    gain = 0.2,
+  ) => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+    g.gain.setValueAtTime(0, ctx.currentTime + start);
+    g.gain.linearRampToValueAtTime(gain, ctx.currentTime + start + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(ctx.currentTime + start);
+    osc.stop(ctx.currentTime + start + dur + 0.02);
+  };
+  const noise = (ctx: AudioContext, start: number, dur: number, gain = 0.15) => {
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const src = ctx.createBufferSource();
+    const g = ctx.createGain();
+    g.gain.value = gain;
+    src.buffer = buf;
+    src.connect(g).connect(ctx.destination);
+    src.start(ctx.currentTime + start);
+  };
+  const playSfx = (id: string) => {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
+    switch (id) {
+      case "click":
+        tone(ctx, 1200, 0, 0.05, "square", 0.15);
+        break;
+      case "ding":
+        tone(ctx, 880, 0, 0.4, "sine", 0.25);
+        tone(ctx, 1320, 0.05, 0.4, "sine", 0.15);
+        break;
+      case "success":
+        tone(ctx, 523, 0, 0.15, "triangle", 0.25);
+        tone(ctx, 659, 0.12, 0.15, "triangle", 0.25);
+        tone(ctx, 784, 0.24, 0.3, "triangle", 0.25);
+        break;
+      case "error":
+        tone(ctx, 220, 0, 0.2, "sawtooth", 0.25);
+        tone(ctx, 180, 0.18, 0.3, "sawtooth", 0.25);
+        break;
+      case "notify":
+        tone(ctx, 988, 0, 0.12, "sine", 0.22);
+        tone(ctx, 1318, 0.13, 0.2, "sine", 0.22);
+        break;
+      case "swoosh":
+        noise(ctx, 0, 0.4, 0.18);
+        break;
+      case "applause":
+        for (let i = 0; i < 12; i++) noise(ctx, i * 0.05, 0.18, 0.12);
+        break;
+      case "magic":
+        for (let i = 0; i < 8; i++) tone(ctx, 600 + i * 180, i * 0.06, 0.2, "triangle", 0.15);
+        break;
+    }
+  };
+
   const speak = (text: string) => {
     if (!text) return;
     setLastSpeech(text);
@@ -1045,6 +1123,42 @@ function Index() {
               </button>
             </div>
           </div>
+
+          {/* Sound effects library */}
+          <div className="mt-5 bg-zinc-900/80 rounded-xl border border-zinc-800 p-4">
+            <h3 className="text-sm font-semibold text-zinc-100 mb-3">
+              🎵 {lang === "ar" ? "مكتبة الأصوات" : "Sound effects"}
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {([
+                { id: "click", ar: "🖱️ نقرة", en: "🖱️ Click" },
+                { id: "ding", ar: "🔔 جرس", en: "🔔 Ding" },
+                { id: "success", ar: "✅ نجاح", en: "✅ Success" },
+                { id: "error", ar: "❌ خطأ", en: "❌ Error" },
+                { id: "notify", ar: "📨 تنبيه", en: "📨 Notify" },
+                { id: "swoosh", ar: "💨 انتقال", en: "💨 Swoosh" },
+                { id: "applause", ar: "👏 تصفيق", en: "👏 Applause" },
+                { id: "magic", ar: "✨ سحر", en: "✨ Magic" },
+              ] as const).map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    playSfx(s.id);
+                    addLog(`🎵 ${lang === "ar" ? s.ar : s.en}`);
+                  }}
+                  className="text-xs px-2 py-2 rounded-lg bg-zinc-800 text-zinc-100 hover:bg-zinc-700 border border-zinc-700"
+                >
+                  {lang === "ar" ? s.ar : s.en}
+                </button>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-zinc-500">
+              {lang === "ar"
+                ? "اضغط أي صوت لتجربته. تُولَّد الأصوات في المتصفح دون أي ملفات خارجية."
+                : "Click any sound to preview. Generated in-browser, no external files."}
+            </p>
+          </div>
+
 
         </section>
       </main>

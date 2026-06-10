@@ -166,9 +166,9 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
-        {/* Description panel — below the TV */}
-        <aside className="space-y-4 order-2">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row-reverse gap-6">
+        {/* Description panel — right side on large screens */}
+        <aside className="space-y-4 order-2 lg:order-1 w-full lg:w-1/3 lg:max-w-md">
 
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 shadow-sm">
             <label className="block text-sm font-semibold text-zinc-100 mb-2">
@@ -289,7 +289,7 @@ function Index() {
         </aside>
 
         {/* TV — full width, above the description */}
-        <section className="order-1 flex flex-col w-full">
+        <section className="order-1 lg:order-2 flex flex-col w-full lg:flex-1 lg:min-w-0">
 
 
           {/* Outer box — deepest frame with rim light */}

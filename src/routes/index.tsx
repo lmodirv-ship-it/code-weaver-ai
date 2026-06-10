@@ -187,7 +187,7 @@ function Index() {
                 <button
                   key={i}
                   onClick={() => setDescription(ex)}
-                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                  className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
                 >
                   مثال {i + 1}
                 </button>

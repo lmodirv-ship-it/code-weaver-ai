@@ -68,6 +68,40 @@ function Index() {
     setHtml(code);
   };
 
+  const onPickImage = (file: File | null) => {
+    if (!file) {
+      setImageDataUrl("");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setAnalyzeError(lang === "ar" ? "الصورة كبيرة جداً (الحد 5MB)" : "Image too large (max 5MB)");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setImageDataUrl(String(reader.result || ""));
+    reader.readAsDataURL(file);
+  };
+
+  const handleAnalyze = async () => {
+    setAnalyzeError("");
+    setAnalysis("");
+    if (!siteUrl.trim() && !imageDataUrl) {
+      setAnalyzeError(lang === "ar" ? "أدخل رابطاً أو ارفع صورة" : "Enter a URL or upload an image");
+      return;
+    }
+    setAnalyzing(true);
+    try {
+      const res = await runAnalyze({
+        data: { url: siteUrl.trim(), imageDataUrl, lang },
+      });
+      setAnalysis(res.description || "");
+    } catch (e) {
+      setAnalyzeError((e as Error).message || "Error");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   const handleSave = () => {
     const name = projectName.trim() || description.slice(0, 40) || "مشروع";
     const p: Project = {

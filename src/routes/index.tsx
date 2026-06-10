@@ -222,7 +222,7 @@ function Index() {
               </div>
             </div>
 
-            <div className="sticky bottom-2 z-30 grid grid-cols-2 gap-2 mt-4 p-2 -mx-2 rounded-xl bg-zinc-900/95 backdrop-blur border border-zinc-800 shadow-[0_-8px_20px_-10px_rgba(0,0,0,0.8)]">
+            <div className="fixed bottom-0 inset-x-0 z-40 grid grid-cols-2 gap-2 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+12px)] bg-zinc-900/95 backdrop-blur border-t border-zinc-800 shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.9)] sm:max-w-[1500px] sm:mx-auto sm:left-1/2 sm:-translate-x-1/2 sm:px-6">
               <button
                 onClick={handleGenerate}
                 className="text-sm font-semibold px-4 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 hover:opacity-95"

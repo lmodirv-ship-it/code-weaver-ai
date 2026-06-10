@@ -1382,7 +1382,7 @@ function Index() {
                 )}
                 <button
                   onClick={downloadVideoToChosenLocation}
-                  disabled={!recordedVideoUrl}
+                  disabled={!recordedVideoUrl || downloadResult === "downloading"}
                   className="w-full text-center text-sm font-semibold px-3 py-2.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:cursor-not-allowed transition"
                 >
                   📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
@@ -1395,6 +1395,34 @@ function Index() {
                   >
                     ⬇️ {lang === "ar" ? "تحميل سريع" : "Quick download"}
                   </a>
+                )}
+
+                {/* Download progress & result */}
+                {downloadResult !== "idle" && (
+                  <div className="space-y-1 pt-1">
+                    <Progress value={downloadProgress} className="h-2" />
+                    <div className="flex justify-between items-center px-1">
+                      <span className="text-[10px] font-mono">
+                        {downloadResult === "downloading" ? (
+                          <span className="flex items-center gap-1 text-blue-400 animate-pulse">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
+                            {lang === "ar" ? "جاري التخزين..." : "Saving..."}
+                          </span>
+                        ) : downloadResult === "success" ? (
+                          <span className="flex items-center gap-1 text-emerald-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                            ✅ {downloadMessage}
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-red-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+                            {downloadMessage}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-mono">{downloadDuration.toFixed(1)}s</span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

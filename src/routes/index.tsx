@@ -832,6 +832,23 @@ function Index() {
                 >
                   🔊 {lang === "ar" ? "إعادة قراءة" : "Replay voice"}
                 </button>
+                <button
+                  onClick={startRecording}
+                  disabled={isRecording}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
+                >
+                  {isRecording
+                    ? (lang === "ar" ? "⏺ جاري التسجيل..." : "⏺ Recording...")
+                    : (lang === "ar" ? "🎥 تسجيل الشاشة" : "🎥 Record screen")}
+                </button>
+                {isRecording && (
+                  <button
+                    onClick={stopRecording}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
+                  >
+                    ⏹ {lang === "ar" ? "إنهاء وحفظ" : "Stop & save"}
+                  </button>
+                )}
               </div>
             </div>
 

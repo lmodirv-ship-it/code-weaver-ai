@@ -1272,19 +1272,10 @@ function Index() {
                     className="w-full rounded-lg bg-black aspect-video"
                   />
                   <button
-                    onClick={async () => {
-                      try {
-                        const r = await fetch(recordedVideoUrl);
-                        const blob = await r.blob();
-                        const ext = recordedVideoMime.includes("mp4") ? "mp4" : "webm";
-                        saveAs(blob, `tv_recording_${Date.now()}.${ext}`);
-                      } catch (e) {
-                        addLog(`❌ ${(e as Error).message}`);
-                      }
-                    }}
+                    onClick={downloadVideoToChosenLocation}
                     className="w-full text-center text-xs px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
                   >
-                    📥 {lang === "ar" ? "تحميل الفيديو" : "Download video"}
+                    📥 {lang === "ar" ? "تحميل الفيديو (اختر الموقع)" : "Download video (choose location)"}
                   </button>
                 </div>
               ) : (

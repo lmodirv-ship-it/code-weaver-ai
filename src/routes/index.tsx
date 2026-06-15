@@ -1192,7 +1192,32 @@ function Index() {
                   />
                   <div className="pointer-events-none absolute inset-0 z-10 rounded-lg shadow-[inset_0_0_80px_rgba(0,0,0,0.6)]" />
 
-                  {mode === "describe" && (analyzedSiteUrl || analyzedScreenshot) ? (
+                  {screensaverActive ? (
+                    <div className="absolute inset-0 bg-black">
+                      <div className="absolute inset-0 animate-fadeIn">
+                        <iframe
+                          src={screensaverSites[screensaverIndex]?.url}
+                          title="screensaver"
+                          className="absolute inset-0 w-full h-full bg-white"
+                          sandbox="allow-scripts allow-same-origin allow-forms"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      {/* Screensaver overlay info */}
+                      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-bold text-white">{screensaverSites[screensaverIndex]?.url}</p>
+                            <p className="text-xs text-zinc-300">{screensaverSites[screensaverIndex]?.description.slice(0, 120)}...</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-zinc-400 font-mono">{screensaverIndex + 1} / {screensaverSites.length}</p>
+                            <p className="text-[10px] text-blue-300 animate-pulse">{lang === "ar" ? "شاشة توقف — اضغط في أي مكان للإيقاف" : "Screensaver — click anywhere to stop"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : mode === "describe" && (analyzedSiteUrl || analyzedScreenshot) ? (
                     analyzedSiteUrl ? (
                       <iframe
                         src={analyzedSiteUrl}

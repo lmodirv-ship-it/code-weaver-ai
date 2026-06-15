@@ -86,11 +86,36 @@ function Index() {
 
   // Default demo sites for screensaver when no bulk results yet
   const screensaverSites = useMemo(() => {
-    const fallback = [
-      { url: "https://example.com", description: "موقع تجريبي", pageCount: 1 },
-      { url: "https://www.wikipedia.org", description: "ويكيبيديا", pageCount: 5 },
-      { url: "https://www.github.com", description: "GitHub", pageCount: 3 },
+    const domains = [
+      "adkhar.hn-groupe.net","admin.hn-db.fun","admin.hn-driver.com","admin.hndriver.company",
+      "ai.hn-db.fun","ai.hn-groupe.org","api.hn-db.fun","api.hn-dbpro.com",
+      "api.slavacall-hiba.online","auth.hn-db.fun","blog.hn-groupe.org","build.hn-createur.com",
+      "build.hn-groupe.net","buildcv-ai.online","call.hndriver.company","callcentre.hn-driver.com",
+      "carwashpro.com","cinema.hn-groupe.org","client.hn-driver.com","client.hndriver.company",
+      "cloud.hn-createur.com","createur.hn-groupe.net","cv.hn-groupe.org","db.hn-createur.com",
+      "delivery.hn-driver.com","delivery.hndriver.company","driver.hn-driver.com","driver.hndriver.company",
+      "facturation.hn-createur.com","files.hn-db.fun","film.hn-createur.com","generatin.hn-groupe.org",
+      "goupe-hn.com","goupe-hn.fun","goupe-hn.online","goupe-hn.site",
+      "hiba-eco.com","hn-adkhar.life","hn-ai.pro","hn-ai.store",
+      "hn-bd.online","hn-carwash.online","hn-carwash.site","hn-chat.com",
+      "hn-createur.com","hn-db.fun","hn-db.hn-groupe.net","hn-dbpro.com",
+      "hn-driver.com","hn-driver.online","hn-driver.site","hn-finance.online",
+      "hn-finance.site","hn-groupe.fun","hn-groupe.net","hn-groupe.org",
+      "hn-groupe.pro","hn-groupe.site","hn-groupe.tech","hn-immo.com",
+      "hnapps.store","hnchat.net","hnclinik-ai.com","hnclinik.hn-groupe.net",
+      "hndriver.company","hndriver.hn-driver.com","imm.hn-groupe.net","lavagenizar.com",
+      "learn.hn-createur.com","learn.hn-groupe.tech","owner.hn-db.fun","rule.hn-db.fun",
+      "site.hn-groupe.tech","slavacall-hiba.com","slavacall-hiba.online","status.hn-db.fun",
+      "store.hn-groupe.net","stouk.hn-driver.com","studio.hn-createur.com","studio.hn-groupe.org",
+      "super.hn-driver.com","tanjaprint.com","tanjaprint.online","users.hn-db.fun",
+      "video.hn-createur.com","video.hn-groupe.net","video.hn-groupe.org","video.hn-groupe.tech",
+      "ws.hn-db.fun",
     ];
+    const fallback = domains.map((d) => ({
+      url: `https://${d}`,
+      description: `موقع ${d} ضمن مجموعة HN — يتم عرضه تلقائياً في وضع شاشة التوقف.`,
+      pageCount: 1,
+    }));
     return bulkResults.length > 0 ? bulkResults : fallback;
   }, [bulkResults]);
 

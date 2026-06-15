@@ -782,20 +782,20 @@ function Index() {
   }, [html]);
 
   return (
-    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 40%, #000000 100%)" }}>
+    <div className="futuristic min-h-screen">
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-black/70 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-cyan-500/20 bg-black/50 backdrop-blur-xl sticky top-0 z-20" style={{ boxShadow: "0 1px 0 rgba(0,240,255,0.15), 0 8px 32px rgba(176,38,255,0.15)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold neon-border corner-cut" style={{ fontFamily: "'JetBrains Mono', monospace", color: "#00f0ff" }}>
               W
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-white">
+              <h1 className="text-base sm:text-lg font-bold neon-text">
                 مصمم المواقع الذكي
               </h1>
-              <p className="text-xs text-zinc-300">
-                Smart Website Designer · AR / EN
+              <p className="text-[11px] tracking-[0.2em] uppercase text-cyan-300/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                ◤ SMART.WEB.DESIGNER · v2.077 ◢
               </p>
             </div>
           </div>

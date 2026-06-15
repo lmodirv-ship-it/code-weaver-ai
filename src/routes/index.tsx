@@ -76,6 +76,24 @@ function Index() {
   const [bulkRunning, setBulkRunning] = useState<boolean>(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
 
+  // Screensaver (rotating analyzed sites when idle)
+  const [screensaverActive, setScreensaverActive] = useState<boolean>(false);
+  const [screensaverIndex, setScreensaverIndex] = useState<number>(0);
+  const screensaverTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const SCREENSAVER_IDLE_MS = 25000; // 25 seconds idle before starting
+  const SCREENSAVER_SWITCH_MS = 8000; // 8 seconds per site
+
+  // Default demo sites for screensaver when no bulk results yet
+  const screensaverSites = useMemo(() => {
+    const fallback = [
+      { url: "https://example.com", description: "موقع تجريبي", pageCount: 1 },
+      { url: "https://www.wikipedia.org", description: "ويكيبيديا", pageCount: 5 },
+      { url: "https://www.github.com", description: "GitHub", pageCount: 3 },
+    ];
+    return bulkResults.length > 0 ? bulkResults : fallback;
+  }, [bulkResults]);
+
   // Smart assistant (mascot + voice + log)
   const [logEntries, setLogEntries] = useState<string[]>([]);
   const [mascotActive, setMascotActive] = useState<boolean>(false);

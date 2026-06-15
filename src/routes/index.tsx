@@ -251,6 +251,62 @@ function Index() {
     }
   };
 
+  // ── Screensaver (rotating analyzed sites on idle) ──
+  const stopScreensaver = () => {
+    if (screensaverTimerRef.current) {
+      clearInterval(screensaverTimerRef.current);
+      screensaverTimerRef.current = null;
+    }
+    setScreensaverActive(false);
+  };
+
+  const startScreensaver = () => {
+    if (mode !== "describe") return; // only in analyze mode
+    if (screensaverActive) return;
+    stopScreensaver();
+    setScreensaverIndex(0);
+    setScreensaverActive(true);
+    screensaverTimerRef.current = setInterval(() => {
+      setScreensaverIndex((prev) => (prev + 1) % screensaverSites.length);
+    }, SCREENSAVER_SWITCH_MS);
+  };
+
+  const resetIdleTimer = () => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    // Stop screensaver immediately on any user activity
+    if (screensaverActive) stopScreensaver();
+    // Restart idle countdown
+    idleTimerRef.current = setTimeout(() => {
+      startScreensaver();
+    }, SCREENSAVER_IDLE_MS);
+  };
+
+  useEffect(() => {
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    const handler = () => resetIdleTimer();
+    events.forEach((e) => window.addEventListener(e, handler));
+    resetIdleTimer(); // start initial timer
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handler));
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      stopScreensaver();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, screensaverSites.length]);
+
+  // Stop screensaver when mode switches to create
+  useEffect(() => {
+    if (mode === "create") stopScreensaver();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  useEffect(() => {
+    return () => {
+      stopScreensaver();
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, []);
+
   const startMascotTour = () => {
     stopTour();
     const sections = lang === "ar"
